@@ -5,6 +5,6 @@ y.t=function(el,o){y._=y.doc.getElementsByTagName(el);o?y._=y._[0]:null;return y
 y.c=function(el,o){y._=y.doc.getElementsByClassName(el);o?y._=y._[0]:null;return y};
 y.n=function(el,o){y._=y.doc.getElementsByName(el);o?y._=y._[0]:null;return y};
 y.append=function(el){
-    y._.insertAdjacentHTML('afterbegin', el);
+    y._.insertAdjacentHTML('afterbegin', el);return y;
 }};
 _=new xx();
