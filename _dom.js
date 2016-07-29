@@ -1,10 +1,10 @@
-function constr(){y=this;y.doc=document;_=null};
-constr.prototype.s=function(str,o){o?y._=y.doc.querySelector(str):y._=y.doc.querySelectorAll(str);return y}
-constr.prototype.i=function(str){y._=y.doc.getElementById(str);return y}
-constr.prototype.t=function(str,o){y._=y.doc.getElementsByTagName(str);o?y._=y._[0];return y}
-constr.prototype.c=function(str,o){y._=y.doc.getElementsByClassName(str);o?y._=y._[0];return y}
-constr.prototype.n=function(str,o){y._=y.doc.getElementsByName(str);o?y._=y._[0];return y}
-constr.prototype.append = function(){
+function xx(){y=this;y.doc=document;
+y.s=function(el,o){o?y._=y.doc.querySelector(el):y._=y.doc.querySelectorAll(el);return y};
+y.i=function(el){y._=y.doc.getElementById(el);return y};
+y.t=function(el,o){y._=y.doc.getElementsByTagName(el);o?y._=y._[0]:null;return y};
+y.c=function(el,o){y._=y.doc.getElementsByClassName(el);o?y._=y._[0]:null;return y};
+y.n=function(el,o){y._=y.doc.getElementsByName(el);o?y._=y._[0]:null;return y};
+y.append=function(){
     this.tdoc.insertAdjacentHTML('afterbegin', '<div id="newChild">mark</div>');
-}
-_=new constr();
+}};
+_=new xx();
