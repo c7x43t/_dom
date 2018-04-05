@@ -589,45 +589,6 @@ body{
 }
 /* DEVELOPMENT - TESTCOCDE */
 
-/* NAVIGATION */
-/*
-	#navigation li{
-		background: url(../img/bg-carbon.png) top center;
-		-webkit-border-radius: 5px;
-		-moz-border-radius: 5px;
-		border-radius: 5px;
-		line-height: 1.0;
-	}
-	#navigation a{
-		display: block;
-		background: transparent;
-		padding: 12px 12px;
-		font-size: 14px;
-		color: #FFF;
-	}
-
-	/* Display Dropdowns on Hover */
-/*
-	nav ul li:hover > ul {
-		display:inherit;
-	}
-	/* First Tier Dropdown */
-/*
-	nav ul ul li {
-		width:170px;
-		float:none;
-		display:list-item;
-		position: relative;
-	}
-	/* Second, Third and more Tiers	*/
-/*	nav ul ul ul li {
-		position: relative;
-		top:-60px; 
-		left:170px;
-	}
-	/* Change this in order to change the Dropdown symbol */
-/*	li > a:after { content:  ' +'; }
-	li > a:only-child:after { content: ''; }
 /* CAROUSEL */
 .carousel {
   background: #f8f9fa;
@@ -911,63 +872,4 @@ body{
 footer{
 	background: url(../img/carbon1.jpg) center center;
 	padding: 30px 0;
-}
-
-/* EXPERMINETAL 2 */
-/* navbar */
-nav {
-  text-align:center;
-  width: 100%;
-  background: #bebebe;
-  padding: 0;
-  margin: 0;
-  height: 60px;
-  position:relative;
-}
-
-nav>ul {
-  background: #bebebe;
-  list-style:none;
-  margin: 0;
-  height: 60px;
-
-}
-
-
-nav>ul>li {
-  display: inline-block;
-}
-
-
-nav>ul>li a {
-  color:#333333;
-  display:block;
-  text-decoration:none;
-  float: left;
-  height: 60px;
-   line-height: 60px;
-}
-
-nav>ul>li:hover {
-  background: #333333;
-}
-
-
-nav>ul>li:hover > a{
-    color:#FFFFFF;
-}
-
-nav>ul>li:hover > ul {
-  display:block;
-}
-
-nav ul ul {
-  background: #BEBEBE;
-  padding:0;
-  text-align: center;
-  display:none;
-  width: 100%;
-  position: absolute;
-  top: 60px;
-  left: 0px;
 }
