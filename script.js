@@ -133,7 +133,6 @@
 	// main
 	var $$=selector=>{
 		var nodeList=fastQuery(document,selector);
-		//Object.assign(nodeList);
 		return equip(nodeList);
 	}
 	// ## public vars ##
