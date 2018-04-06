@@ -1,29 +1,22 @@
-// $$.gather(query1,query2,query3) => joined list of all uqeries
 (()=>{
 	// ## private vars ##
 	var regexPreFilter=/[.#]?-?[_a-zA-Z]+[_a-zA-Z0-9-]*/;
 	var regexSpaceFilter=/ /;
 	// ## private functions ##
 	// fast functions based on: https://github.com/codemix/fast.js/
-	function bindInternal3(func, thisContext) {
-		return function (a, b, c) {
-			return func.call(thisContext, a, b, c);
-		};
-	}
 	// fast Map
 	function fastMap(subject, fn, test, thisContext) {
 		var length = subject.length,
 			result = new Array(length),
-			iterator = thisContext !== undefined ? bindInternal3(fn, thisContext) : fn,
 			i;
 		if(!test){
 			for (i = 0; i < length; i++) {
-				result[i] = iterator(subject[i], i, subject);
+				result[i] = fn(subject[i], i, subject);
 			}
 		}else{
 			for (i = 0; i < length; i++) {
 				if(test(subject[i])) break;
-				result[i] = iterator(subject[i], i, subject);
+				result[i] = fn(subject[i], i, subject);
 			}
 		}
 		return result;
@@ -31,7 +24,6 @@
 	// fast Reduce
 	function fastReduce (subject, fn, initialValue, test, thisContext) {
 	  var length = subject.length,
-			iterator = thisContext !== undefined ? bindInternal4(fn, thisContext) : fn,
 			i, result;
 
 		if (initialValue === undefined) {
@@ -44,12 +36,12 @@
 		}
 		if(!test){
 			for (; i < length; i++) {
-				result = iterator(result, subject[i], i, subject);
+				result = fn(result, subject[i], i, subject);
 			}
 		}else{
 			for (; i < length; i++) {
 				if(test(subject[i])) break;
-				result = iterator(result, subject[i], i, subject);
+				result = fn(result, subject[i], i, subject);
 			}
 		}
 		return result;
@@ -58,18 +50,17 @@
 	function fastFilter (subject, fn, test, thisContext) {
 		var length = subject.length,
 			result = [],
-			iterator = thisContext !== undefined ? bindInternal3(fn, thisContext) : fn,
 			i;
 		if(!test){
 			for (i = 0; i < length; i++) {
-				if (iterator(subject[i], i, subject)) {
+				if (fn(subject[i], i, subject)) {
 					result.push(subject[i]);
 				}
 			}
 		}else{
 			for (i = 0; i < length; i++) {
 				if(test(subject[i])) break;
-				if (iterator(subject[i], i, subject)) {
+				if (fn(subject[i], i, subject)) {
 					result.push(subject[i]);
 				}
 			}
@@ -94,12 +85,6 @@
 		}
 		return nodeList;
 	}
-	/*
-	// obsolete with equip fast array native functions to nodeList
-	function queryToArray(el,selector){ 
-		return Array.from(fastQuery(el,selector));
-	};
-	//*/
 	function equip(nodeList){
 		// map=fn=>a.map(e=>fn(arguments));
 		nodeList.map=(fn,init,cond)=>fastMap(nodeList,fn,init,cond);
@@ -136,9 +121,6 @@
 		return equip(nodeList);
 	}
 	// ## public vars ##
-	$$.map=fastMap;
-	$$.reduce=fastReduce;
-	$$.filter=fastFilter;
 	$$.ajax=()=>{
 		
 	}
