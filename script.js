@@ -4,25 +4,32 @@
 	var regexPreFilter=/[.#]?-?[_a-zA-Z]+[_a-zA-Z0-9-]*/;
 	var regexSpaceFilter=/ /;
 	// ## private functions ##
-	// fast functions copied from: https://github.com/codemix/fast.js/
+	// fast functions based on: https://github.com/codemix/fast.js/
 	function bindInternal3(func, thisContext) {
 		return function (a, b, c) {
 			return func.call(thisContext, a, b, c);
 		};
 	}
 	// fast Map
-	function fastMap(subject, fn, thisContext) {
+	function fastMap(subject, fn, test, thisContext) {
 		var length = subject.length,
 			result = new Array(length),
 			iterator = thisContext !== undefined ? bindInternal3(fn, thisContext) : fn,
 			i;
-		for (i = 0; i < length; i++) {
-			result[i] = iterator(subject[i], i, subject);
+		if(!test){
+			for (i = 0; i < length; i++) {
+				result[i] = iterator(subject[i], i, subject);
+			}
+		}else{
+			for (i = 0; i < length; i++) {
+				if(test(subject[i])) break;
+				result[i] = iterator(subject[i], i, subject);
+			}
 		}
 		return result;
 	};
 	// fast Reduce
-	function fastReduce (subject, fn, initialValue, thisContext) {
+	function fastReduce (subject, fn, initialValue, test, thisContext) {
 	  var length = subject.length,
 			iterator = thisContext !== undefined ? bindInternal4(fn, thisContext) : fn,
 			i, result;
@@ -35,21 +42,36 @@
 			i = 0;
 			result = initialValue;
 		}
-
-		for (; i < length; i++) {
-			result = iterator(result, subject[i], i, subject);
+		if(!test){
+			for (; i < length; i++) {
+				result = iterator(result, subject[i], i, subject);
+			}
+		}else{
+			for (; i < length; i++) {
+				if(test(subject[i])) break;
+				result = iterator(result, subject[i], i, subject);
+			}
 		}
 		return result;
 	};
 	// fast Filter
-	function fastFilter (subject, fn, thisContext) {
+	function fastFilter (subject, fn, test, thisContext) {
 		var length = subject.length,
 			result = [],
 			iterator = thisContext !== undefined ? bindInternal3(fn, thisContext) : fn,
 			i;
-		for (i = 0; i < length; i++) {
-			if (iterator(subject[i], i, subject)) {
-				result.push(subject[i]);
+		if(!test){
+			for (i = 0; i < length; i++) {
+				if (iterator(subject[i], i, subject)) {
+					result.push(subject[i]);
+				}
+			}
+		}else{
+			for (i = 0; i < length; i++) {
+				if(test(subject[i])) break;
+				if (iterator(subject[i], i, subject)) {
+					result.push(subject[i]);
+				}
 			}
 		}
 		return result;
@@ -80,9 +102,9 @@
 	//*/
 	function equip(nodeList){
 		// map=fn=>a.map(e=>fn(arguments));
-		nodeList.map=fn=>fastMap(nodeList,fn);
-		nodeList.reduce=fn=>fastReduce(nodeList,fn);
-		nodeList.filter=fn=>fastFilter(nodeList,fn);
+		nodeList.map=(fn,init,cond)=>fastMap(nodeList,fn,init,cond);
+		nodeList.reduce=(fn,init,cond)=>fastReduce(nodeList,fn,init,cond);
+		nodeList.filter=(fn,init,cond)=>fastFilter(nodeList,fn,init,cond);
 		nodeList.html=str=>{
 			nodeList.map(el=>str?el.innerHTML=str:el.innerHTML);
 			return nodeList;
@@ -110,8 +132,9 @@
 	}
 	// main
 	var $$=selector=>{
-		var nodeArray=fastQuery(document,selector);
-		return equip(nodeArray);
+		var nodeList=fastQuery(document,selector);
+		//Object.assign(nodeList);
+		return equip(nodeList);
 	}
 	// ## public vars ##
 	$$.map=fastMap;
