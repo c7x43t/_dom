@@ -152,6 +152,10 @@
 		
 	};
 	$$.query=(el,selector)=>fastQuery(el,selector);
+	// map-reduce
+	$$.map=fastMap;
+	$$.reduce=fastReduce;
+	$$.filter=fastFilter;
 	// export
 	window.$$=$$;
 })();
