@@ -5,7 +5,7 @@
 	// ## private functions ##
 	// fast functions based on: https://github.com/codemix/fast.js/
 	// fast Map
-	function fastMap(subject, fn, test, thisContext) {
+	function fastMap(subject, fn, test) {
 		var length = subject.length,
 			result = new Array(length),
 			i;
@@ -22,7 +22,7 @@
 		return result;
 	};
 	// fast Reduce
-	function fastReduce (subject, fn, initialValue, test, thisContext) {
+	function fastReduce (subject, fn, initialValue, test) {
 	  var length = subject.length,
 			i, result;
 
@@ -47,7 +47,7 @@
 		return result;
 	};
 	// fast Filter
-	function fastFilter (subject, fn, test, thisContext) {
+	function fastFilter (subject, fn, test) {
 		var length = subject.length,
 			result = [],
 			i;
@@ -67,7 +67,7 @@
 		}
 		return result;
 	};
-	// faster than querySelectorAll
+	// faster than querySelectorAll (in most cases)
 	function fastQuery(el,selector){
 		var nodeList;
 		if(regexPreFilter.exec(selector)&&!regexSpaceFilter.exec(selector)){
@@ -86,10 +86,11 @@
 		return nodeList;
 	}
 	function equip(nodeList){
+		//if(nodeList.length===0) return nodeList;
 		// map=fn=>a.map(e=>fn(arguments));
-		nodeList.map=(fn,init,cond)=>fastMap(nodeList,fn,init,cond);
+		nodeList.map=(fn,cond)=>fastMap(nodeList,fn,cond);
 		nodeList.reduce=(fn,init,cond)=>fastReduce(nodeList,fn,init,cond);
-		nodeList.filter=(fn,init,cond)=>fastFilter(nodeList,fn,init,cond);
+		nodeList.filter=(fn,cond)=>fastFilter(nodeList,fn,cond);
 		nodeList.html=str=>{
 			nodeList.map(el=>str?el.innerHTML=str:el.innerHTML);
 			return nodeList;
@@ -119,11 +120,38 @@
 	var $$=selector=>{
 		var nodeList=fastQuery(document,selector);
 		return equip(nodeList);
-	}
+	};
 	// ## public vars ##
+	$$.addClass=(el,className)=>{
+		if (el.classList)
+		  el.classList.add(className);
+		else
+		  el.className += ' ' + className;
+	};
+	$$.removeClass=(el,className)=>{
+		if (el.classList)
+		  el.classList.remove(className);
+		else
+		  el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+	};
+	$$.hasClass=(el,className)=>{
+		if (el.classList)
+		  return el.classList.contains(className);
+		else
+		  return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+	};
+	$$.toggleClass=(el,className)=>{
+		$$.hasClass(el,className)?$$.removeClass(el,className):$$.addClass(el,className);
+	};
+	//
+	$$.isHover=e=>{
+		return (e.parentElement.querySelector(':hover') === e);
+	};
+	// ajax
 	$$.ajax=()=>{
 		
-	}
+	};
+	$$.query=(el,selector)=>fastQuery(el,selector);
 	// export
 	window.$$=$$;
 })();
