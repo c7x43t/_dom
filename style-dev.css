@@ -5,9 +5,13 @@ template {
 [hidden] {
   display: none;
 }
-body, html {
+body, html, ul, menu, dir {
 	margin: 0;
 	padding: 0;	
+}
+/* lists */
+li{
+	list-style:none;
 }
 /* html */
 body {
@@ -32,12 +36,12 @@ body {
 	box-sizing: border-box
 }
 /* transition */
-/**{
-	-webkit-transition: all 0.5s ease-in-out 0.5s;
-	-o-transition: all 0.5s ease-in-out 0.5s;
-	-moz-transition: all 0.5s ease-in-out 0.5s;
-	transition: all 0.5s ease-in-out 0.5s
-}*/
+transition{
+	-webkit-transition: all 0.2s ease-in-out 0.2s;
+	-o-transition: all 0.2s ease-in-out 0.2s;
+	-moz-transition: all 0.2s ease-in-out 0.2s;
+	transition: all 0.2s ease-in-out 0.2s
+}
 /* links */
 a {
   text-decoration: none;
@@ -589,6 +593,45 @@ body{
 }
 /* DEVELOPMENT - TESTCOCDE */
 
+/* NAVIGATION */
+/*
+	#navigation li{
+		background: url(../img/bg-carbon.png) top center;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		line-height: 1.0;
+	}
+	#navigation a{
+		display: block;
+		background: transparent;
+		padding: 12px 12px;
+		font-size: 14px;
+		color: #FFF;
+	}
+
+	/* Display Dropdowns on Hover */
+/*
+	nav ul li:hover > ul {
+		display:inherit;
+	}
+	/* First Tier Dropdown */
+/*
+	nav ul ul li {
+		width:170px;
+		float:none;
+		display:list-item;
+		position: relative;
+	}
+	/* Second, Third and more Tiers	*/
+/*	nav ul ul ul li {
+		position: relative;
+		top:-60px; 
+		left:170px;
+	}
+	/* Change this in order to change the Dropdown symbol */
+/*	li > a:after { content:  ' +'; }
+	li > a:only-child:after { content: ''; }
 /* CAROUSEL */
 .carousel {
   background: #f8f9fa;
@@ -737,7 +780,7 @@ body{
     display: block;
     left: 50%;
     position: absolute;
-    top: 50%;
+    top: 40%;
     transform: translate(-50%,-50%);
 }
 .icon {
@@ -779,6 +822,9 @@ body{
 .icon-arrow-right::before {
     transform: translate(-75%,-50%) rotate(135deg);
 }
+.icon-arrow-left::before {
+	transform: translate(-20%,-45%) rotate(315deg);
+}
 /* PRODUCTS */
 .thumbnail img{
 	max-height: 145px;
@@ -792,7 +838,9 @@ body{
     margin-bottom: 10px;
 }
 .hero-feature{
-	max-width:225px;
+	/*max-width:225px;*/
+	max-width: 20%;
+    width: 100%;
 }
 .thumbnail{
 	padding: 0;
@@ -823,12 +871,15 @@ body{
 	min-height:1.4em;
 }
 .products-name{
-	min-height: 4.5em;
+	min-height: 4.5em !important;
     margin-bottom: 0;
 }
-@media only screen and (min-width: 1149px){
+@media only screen and (min-width: 1150px){
 	#header-mobile{
 		display:none
+	}
+	#navigation{
+		margin-top: 22px;
 	}
 }
 @media only screen and (max-width: 1149px){
@@ -839,13 +890,25 @@ body{
 		display:flex;
 	}
 }
-@media only screen and (min-width: 925px) and (max-width: 1049px){
+@media only screen and (min-width: 925px) and (max-width: 1149px){
+	#header-mobile{
+		padding-top: 8px;
+	}
 	.hero-feature{
 		max-width:25%;
 		width:25%
 	}
+	/* minimal basket width */
+}
+@media only screen and (max-width: 1149px){
+	#navigation .side{
+		display:block;
+	}
 }
 @media only screen and (min-width: 700px) and (max-width: 924px){
+	#header-mobile{
+		padding-top: 10px;
+	}
 	.hero-feature{
 		max-width:33.32%;
 		width:33.32%
@@ -857,12 +920,18 @@ body{
 	}
 }
 @media only screen and (min-width: 475px) and (max-width: 699px){
+	#header-mobile{
+		padding-top: 14px;
+	}
 	.hero-feature{
 		max-width:50%;
 		width:50%
 	}
 }
 @media only screen and (max-width: 474px){
+	#header-mobile{
+		padding-top: 18px;
+	}
 	.hero-feature{
 		max-width:100%;
 		width:100%
@@ -872,4 +941,194 @@ body{
 footer{
 	background: url(../img/carbon1.jpg) center center;
 	padding: 30px 0;
+}
+/*NAVIGATION*/
+#navigation{
+	margin-top: 8px;
+}
+#navigation .side{
+	background: url(../img/bg-carbon.png) top center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    height: 38px;
+}
+#navigation .warenkorb{
+	min-width: 70px;
+    height: 38px;
+    background: url(../img/cart.png);
+    background-repeat: no-repeat;
+    background-size: 33.3% 65.8%;
+    top: 0;
+    margin-top: -19px;
+    background-position: 22% 45%;
+}
+@media only screen and (min-width:852px){
+	/* EXPERMINETAL 2 */
+/* navbar */
+/* menu css (structural)*/
+nav {
+  text-align:center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  position:relative;
+  display:flex;
+}
+nav>ul{
+  display:flex;
+}
+nav ul, nav li{
+  margin: 0;
+  padding: 0;
+}
+nav a,nav a:hover{
+  text-decoration:none;
+}
+nav li{
+  list-style: none;
+}
+nav>ul>li>ul{
+  display: none;
+  width:100%
+}
+nav>ul>li:hover > ul{
+    display: flex;
+    flex-wrap: wrap;
+    position: absolute;
+    left: 0;
+}
+/* specific */
+nav ul{
+  display: flex;
+  flex-wrap: wrap;
+}
+nav ul{
+	background-color: #fff;
+}
+.navbar-nav>li>.dropdown-menu {
+    padding: 0px 0px 10px 10px;
+}
+nav>ul>li ul ul{
+  flex-direction:column;
+  text-align:left;
+}
+.level-1>ul{
+	border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.level-1 ul{
+  top: 100%; /*move to general*/
+}
+.level-2>li, .level-3{
+  padding: 1em;
+}
+/* theme */
+nav>ul>li{
+      background: url(../img/bg-carbon.png) top center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    line-height: 1.0;
+  padding: 12px;
+}
+
+#mega{
+  font-size: 14px;
+  color: #FFF;
+}
+.level-2{
+    min-height: 1px;
+    padding-right: 5px;
+    padding-left: 5px;
+    width:20%;
+}
+.level-2 h3{
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.level-2 h3 a{
+    font-weight: bold;
+    color: #337ab7!important;
+}
+.level-3{
+  padding: 0.5em 12px;
+}
+.level-3:hover{
+  background-color:  #eee;
+}
+.level-3 a{
+  color:black;
+}
+}
+@media only screen and (max-width:851px){
+nav {
+  background-color: #333;
+  text-align: center;
+  color:#ccc;
+  font-size: 32px;
+  width: 40px;
+  height: 36px;
+}
+nav:before{
+  content:"≡";
+}
+nav ul,nav .level-1+ul { 
+  display: none;
+}
+nav>ul{
+  width:100vw;
+}
+.level-2>ul{
+  display: block;
+}
+.level-1{
+  background:url(https://www.derlifestyleshop.de/templates/i24-lifestyleshop/img/bg-carbon.png);
+  padding:12px 0px;
+}
+.level-1>a{
+    font-size: 14px;
+    color: #FFF;
+}
+.level-1>ul{
+      background-color: rgba(192,223,253, 1);
+color:#000;
+margin-top: 12px;
+margin-bottom: -12px;
+}
+.level-2{
+  text-align:left;
+  padding:8px;
+  line-height:2em;
+}
+.level-2 a{
+  color:#000;  
+}
+.level-2>h3>a{
+  color:#337ab7;
+  padding:8px;
+}
+
+.level-3{
+  padding: 4px 0px;
+  padding-left:16px;
+}
+nav ul{list-style-type: none;
+font-size:14px;}
+}
+/* css fix for missing class */
+footer{
+	color: #ccc;
+	line-height: 1.55em;
+}
+footer a{
+	color: #ccc;
+}
+footer a:hover{
+	color: #fff;
 }
