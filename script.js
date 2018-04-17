@@ -95,11 +95,19 @@
 			nodeList.map(el=>str?el.innerHTML=str:el.innerHTML);
 			return nodeList;
 		};
-		nodeList.on=(str,fn)=>{
-			fastMap(nodeList,el=>el.addEventListener(str,fn));
+		nodeList.on=(str,fn,bool)=>{
+			
+			fastMap(nodeList,el=>{
+				let isDefault=e=>fn(el,e);
+				let noDefault=e=>{
+					e.preventDefault();
+					return fn(el,e);
+				}
+				el.addEventListener(str,bool?noDefault:isDefault)
+			});
 			return nodeList;
 		};
-		// faster replace operations
+		// faster replace operations - EXPERIMENTAL
 		// {fn} must return an element
 		nodeList.map.replace=fn=>{
 			var list=[];
