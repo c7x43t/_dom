@@ -1,6 +1,6 @@
 (()=>{
 	// ## private vars ##
-	var regexPreFilter=/[.#]?-?[_a-zA-Z]+[_a-zA-Z0-9-]*/;
+	var regexPreFilter=/[.#]?-?[_a-zA-Z]+?[_a-zA-Z0-9-]*/;
 	var regexSpaceFilter=/ /;
 	// ## private functions ##
 	// fast functions based on: https://github.com/codemix/fast.js/
@@ -85,6 +85,27 @@
 		}
 		return nodeList;
 	}
+	// helper functions
+	function on(el,str,fn,bool){
+		let isDefault=e=>fn(el,e);
+		let noDefault=e=>{
+			e.preventDefault();
+			return fn(el,e);
+		}
+		el.addEventListener(str,bool?noDefault:isDefault);
+		return el;
+	}
+	function off(el,str,fn){
+		el.removeEventListener(str,fn);
+		return el;
+	}
+	// equip single
+	function equipSingle(node){
+		node.on=(str,fn,bool)=>on(node,str,fn,bool);
+		node.off=(str,fn)=>off(node,str,fn);
+		return node;
+	}
+	// equip nodeList
 	function equip(nodeList){
 		//if(nodeList.length===0) return nodeList;
 		// map=fn=>a.map(e=>fn(arguments));
@@ -96,17 +117,19 @@
 			return nodeList;
 		};
 		nodeList.on=(str,fn,bool)=>{
-			
 			fastMap(nodeList,el=>{
-				let isDefault=e=>fn(el,e);
-				let noDefault=e=>{
-					e.preventDefault();
-					return fn(el,e);
-				}
-				el.addEventListener(str,bool?noDefault:isDefault)
+				on(el,str,fn,bool);
 			});
 			return nodeList;
 		};
+		nodeList.off=(str,fn)=>{
+			fastMap(nodeList,el=>{
+				off(el,str,fn);
+			});
+		}
+		nodeList.get=n=>{
+			return equipSingle(nodeList[n]);
+		}
 		// faster replace operations - EXPERIMENTAL
 		// {fn} must return an element
 		nodeList.map.replace=fn=>{
@@ -121,7 +144,7 @@
 			$$.map(nodes,(e,i)=>{
 				//e.parentNode.replaceChild(list[i], e);
 			});
-		}
+		};
 		return nodeList;
 	}
 	// main
