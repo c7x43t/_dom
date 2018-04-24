@@ -1,0 +1,223 @@
+Rules:
+Immutable variables:
+-   primitives by default immuable.js for array/objects: Object.assert({},oldObj)|oldArr.slice(0)
+-   >=2 runtime assertions per function
+-   no recursion
+-   function length single printed page
+-   smallest possible data scope
+-   pointer max. single dereference
+-   loops must have fixed bounds (no while)
+-   check the return value of all non-void functions
+-   js: avoid typeconversions
+-   use const >> let
+-   pure functions 
+        a given input produces always the same output
+        no sideeffects
+-   avoid shared state object that is mutated lives in an outer scope -> no race conditions
+const newArray = myArray.map(a => ({...a}));
+const newArray = myArray.map(a => Object.assign({}, a));
+jshint
+
+simple reducer:
+const initialState = 0;
+const reducer = (state = initialState, data) => state + data;
+const total = [0, 1, 2, 3].reduce(reducer);
+console.log(total); // 6
+redux style reducer:
+const defaultState = 0;
+const reducer = (state = defaultState, action) => {
+  switch (action.type) {
+    case 'ADD': return state + action.payload;
+    default: return state;
+  }
+};
+https://traitsjs.github.io/traits.js-website/
+
+create copy of arguments / fast concat
+    https://gist.github.com/endel/fe514f57f7bda2587ebc2ed18f1e51d0
+https://gist.github.com/endel
+
+Addons:
+https://marketplace.visualstudio.com/items?itemName=cmstead.jsrefactor
+jsdoc
+https://www.npmjs.com/package/simple-node-logger
+
+PhantomCSS: (automated visual comparsion of css changes)
+https://github.com/Huddle/PhantomCSS
+CriticalCSS generator:
+https://github.com/pocketjoso/penthouse
+
+NodeJS:
+    https://github.com/SocketCluster/socketcluster
+    https://jsperf.com/json-difftest
+    http://bl.ocks.org/jfreels/6734025 (JSON tabulate)
+Node performance alternative:
+    https://jxcore.io/downloads/
+    https://github.com/stefanocasazza/ULib
+    https://www.techempower.com/benchmarks/#section=data-r14&hw=ph&test=plaintext
+    http://duda.io/slides/#/3
+    API framework:
+        https://kore.io/
+Performant components:
+    https://community.risingstack.com/using-buffers-node-js-c-plus-plus/
+    Bindings for: possibly zlib, hyperscan, levenstein, rapidjson, quicksort (arrayfire)
+    https://github.com/codemix/fast.js/tree/master
+    https://www.npmjs.com/package/fast-levenshtein
+    JSON parser:
+    http://jsoniter.com/
+    https://github.com/Tencent/rapidjson
+    RegEx:
+    https://github.com/uhop/node-re2
+    https://github.com/intel/hyperscan
+    http://intel.github.io/hyperscan/dev-reference/
+    https://rust-leipzig.github.io/regex/2017/03/28/comparison-of-regex-engines/
+    CRC32:
+    https://www.npmjs.com/package/fast-crc32c
+    c binding:
+        https://medium.com/developers-writing/how-to-get-a-performance-boost-using-node-js-native-addons-fd3a24719c85
+Caching gzipped fragments to concat them later [caching crc at compress time][avoid de/compress for O(1)]:
+    node precompression: https://stackoverflow.com/questions/19378185/caching-gzipped-responses-from-node-express-redis
+    https://stackoverflow.com/questions/1143270/how-to-concat-two-or-more-gzip-files-streams?rq=1
+    https://github.com/madler/zlib/blob/master/examples/gzjoin.c
+    https://github.com/madler/zlib/blob/master/examples/gzappend.c
+    https://stackoverflow.com/questions/14744692/concatenate-multiple-zlib-compressed-data-streams-into-a-single-stream-efficient
+    Trivial concat:
+        https://gist.github.com/jgarzik/2716209
+    JSpp - javascript performance primitives:
+    https://www.npmjs.com/package/fast-sort
+    https://www.npmjs.com/package/fast-levenshtein
+    https://www.npmjs.com/package/leven
+    https://www.npmjs.com/package/fast-diff
+    https://www.npmjs.com/package/to-fast-properties
+    https://www.npmjs.com/package/fastparallel + related projects (seedescription)
+    https://www.npmjs.com/package/quick-lru
+    https://www.npmjs.com/package/fast-json-stringify
+    https://www.npmjs.com/package/fast-crc32c
+    https://www.npmjs.com/package/ems
+    https://github.com/PaquitoSoft/memored
+    https://www.npmjs.com/package/node-shared-cache
+    
+    Responsive:
+        768 960 1280 -> https://codepen.io/SitePoint/pen/rJewLG
+        
+    Web Components:
+    https://www.hosteurope.de/ (suport sidebar)
+    http://www.websitedimensions.com/ (widgets)
+    
+    Marketing:
+    https://gutscheine.chip.de/gutscheine (Gutscheinlisten)
+    
+    Architektur:
+    https://medium.com/@amangoeliitb/improving-database-performance-with-redis-dbd38fdf3cb (Redis)
+        SSI:
+           https://www.nginx.com/resources/wiki/start/topics/examples/dynamic_ssi/
+           http://nginx.org/en/docs/http/ngx_http_ssi_module.html
+           https://stackoverflow.com/questions/38000435/nginx-ssi-independent-fragment-caching
+           https://stackoverflow.com/questions/12499229/fastcgi-cache-how-to-cache-for-logged-in-users-and-make-it-custom-for-each-user
+        NGINX random sample config:
+            https://pastebin.com/0xy72mQg
+        Webstack:
+            https://d2c.io/post/fast-scalable-wordpress
+            https://blog.bigdinosaur.org/finally-moving-to-letsencrypt-with-haproxy-varnish-and-nginx/
+            http://agapoff.name/nginx-varnish-haproxy.html
+            https://github.com/jelastic-jps/magento/tree/master/magento19-php7-varnish-mysql-redis-storage 
+            
+    Chat:
+        https://www.livezilla.net/shop/de/?action=preview
+        https://medium.com/@JiaqiPan/hi-jp-you-can-check-out-landbot-io-972d11d0a994
+        
+    Studies:
+        http://www.websiteoptimization.com/speed/tweak/website-speed-search-rankings-study/ (Crawl speed correlates ranking 0.57)
+    Prefetch:
+        https://stackoverflow.com/questions/1760096/override-default-behaviour-for-link-a-objects-in-javascript
+        http://aoxlive.bplaced.net/live%20access/
+    nginx:
+        https://github.com/google/ngx_brotli
+        https://www.nginx.com/blog/compiling-dynamic-modules-nginx-plus/
+        Sticky upstream
+        https://www.nginx.com/blog/nginx-dynamic-modules-how-they-work/
+        https://github.com/nginx-modules
+        https://www.nginx.com/resources/wiki/modules/
+        Building:
+            https://github.com/hansottowirtz/sprockets-exporters_pack/wiki/How-to-enable-Brotli-with-Rails-and%C2%A0Nginx
+CentOS:
+    https://www.techrepublic.com/article/how-to-enable-automatic-security-updates-on-centos-7-with-yum-cron/    
+    https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-centos-7
+    https://wiki.centos.org/HowTos/Network/SecuringSSH
+
+SSL:
+    https://blog.cloudflare.com/open-sourcing-our-nginx-http-2-spdy-code/ 
+    enable sites:
+    https://stackoverflow.com/questions/17859653/nginx-not-running-with-no-error-message
+    https://coderwall.com/p/qb7fua/ssl-session-caching-in-nginx
+    https://bjornjohansen.no/optimizing-https-nginx
+    https://certbot.eff.org/#centosrhel7-other
+    http://blog.commando.io/the-perfect-nginx-ssl-configuration/
+    https://www.sherbers.de/howto/nginx/
+    https://gist.github.com/gavinhungry/7a67174c18085f4a23eb
+    https://stackoverflow.com/questions/41930060/how-do-you-score-a-with-100-on-all-categories-on-ssl-labs-test-with-lets-encry
+    CAA domain whitelist (set in DNS settings):
+        https://blog.qualys.com/ssllabs/2017/03/13/caa-mandated-by-cabrowser-forum
+TCP:
+    https://serverfault.com/questions/686478/nginx-tcp-fast-open-issue
+CDN (url rewrite):
+https://gist.github.com/corbanb/9240622
+Cookieless Domain:
+    Set Gluerecord
+        Pound:
+        https://antrecu.com/blog/configure-lets-encrypt-service-pound-server
+        https://help.ubuntu.com/community/Pound
+        H2o: (because Pound doesn't support br)
+        https://github.com/zchee/h2o-proxy/blob/master/h2o.conf
+        https://github.com/h2o/h2o/issues/741
+        https://github.com/h2o/h2o/wiki/Reverse-Proxy
+SSL testing:
+    https://geekflare.com/ssl-test-certificate/
+ESI (Varnish):
+    https://web.johncook.uk/blogs/website/varnish-esi
+    https://docs.oracle.com/cd/E14571_01/web.1111/e10143/esi.htm#OWCAG276
+    https://varnish-cache.org/docs/2.1/tutorial/purging.html
+Fragment caching with memcached:
+    https://github.com/memcached/memcached/wiki/Programming
+Design:
+    https://css-tricks.com/designing-a-product-page-layout-with-flexbox/
+    https://semantic-ui.com/elements/input.html
+SEO:
+    https://www.shopify.com/blog/16204608-7-effective-ecommerce-product-pages-how-to-turn-visitors-into-customers
+    -Product Description | Specifications
+    -Shipping Details on product page
+    -Add to cart button
+    -Options
+    -Social share per product
+    -Reviews
+    
+Shop:   
+    FAQ:
+        https://www.aboutyou.de/haeufige-fragen/versand-und-lieferkosten
+    XTlike Design:
+        https://www.deichmann.com/DE/de/shop/herren/herren-schuhe/herren-schuhe-business/00000001532873/Business*Schn%C3%BCrer.prod#product-detail-deliverymodes
+        [See product view]
+        https://www.aboutyou.de/p/only/jeans-skinny-reg-soft-ultimate-2269153
+        http://www.atrendo.de/marken/bruno-banani/bruno-banani-geldboerse-7588.html
+    Promotion:
+        http://www.kostenloserversand.net/
+        Blogs
+        Gutscheinseiten
+CSS:
+    https://codepen.io/senff/pen/ayGvD (sticky)       
+    transition: background 0.3s ease 0s, color 0.3s ease 0s;
+    Responsive:
+        https://www.w3schools.com/html/html_responsive.asp
+        https://www.w3schools.com/css/css_rwd_mediaqueries.asp
+        https://learn.shayhowe.com/advanced-html-css/responsive-web-design/
+        https://1stwebdesigner.com/responsive-website-tutorial/
+        https://responsivedesign.is/
+Mobile:
+    https://www.sitepoint.com/community/t/best-way-to-redirect-mobile-traffic-to-your-mobile-website-version/6370/5
+    
+    
+Css background:
+    https://www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%28102\%2C181\%2C255\%2C0\.14\%29\%200\%25\%2C\%20rgba\%28102\%2C181\%2C255\%2C0\.06\%29\%2012\%25\%2C\%20rgba\%28198\%2C227\%2C255\%2C0\%29\%2022\%25\%2C\%20rgba\%28255\%2C255\%2C255\%2C0\%29\%2028\%25\%2C\%20rgba\%28237\%2C246\%2C255\%2C0\%29\%2033\%25\%2C\%20rgba\%2851\%2C150\%2C255\%2C0\.15\%29\%2084\%25\%2C\%20rgba\%2851\%2C150\%2C255\%2C0\.2\%29\%20100\%25\%29\%3B'
+    [Pattern: Carbon]
+    http://enjoycss.com/start#transform
+     
