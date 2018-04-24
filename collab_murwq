@@ -1,0 +1,214 @@
+# nmcli d
+# vi /etc/sysconfig/network-scripts/ifcfg-eth0
+# ctrl + s ?
+# ONBOOT=yes
+# {ESC}, :wq 
+#service network restart
+# yum install openssh openssh-server openssh-clients openssl-libs
+# cp /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
+# nano /etc/ssh/sshd_config
+# Port 22
+# systemctl restart sshd.service
+sudo yum update -y
+sudo yum install gcc pcre-static pcre-devel -y
+sudo yum remove httpd -y #prepare nginx
+sudo yum remove mysql -y #prepare mariadb
+sudo yum install nano htop -y
+sudo yum install epel-release -y
+sudo yum install fail2ban -y
+sudo yum install yum-cron -y #prepare auto update
+sudo yum install openssl-devel -y
+sudo yum install perl-ExtUtils-Embed -y
+sudo yum install git -y
+sudo yum install gcc-c++ libuuid-devel bzip2-devel curl-devel libjpeg-devel libpng-devel freetype-devel libc-client-devel.i686 libc-client-devel libmcrypt-devel -y
+sudo yum install bzip2 unzip -y
+sudo yum install libxml2-devel -y
+sudo yum install uw-imap-devel -y
+sudo yum install net-tools -y
+yum install gcc gcc-c++ kernel-devel  -y
+yum install readline-dev  -y
+rpm -Uvh https://centos7.iuscommunity.org/ius-release.rpm
+yum install haproxy18u
+###-fail2ban-configuration
+cat >> /etc/fail2ban.conf << EOF
+[DEFAULT]
+maxfailures = 6
+bantime = 9000
+findtime = 6000
+EOF
+cat >> /etc/fail2ban/jail.local << EOF
+[DEFAULT]
+bantime = 10800
+findtime = 3600
+banaction = iptables-multiport
+maxretry = 5
+logpath = /var/log/fail2ban.log
+[sshd]
+enabled = true
+maxretry = 5
+EOF
+# HAProxy - http://www.haproxy.org/#down - https://www.upcloud.com/support/haproxy-load-balancer-centos/#installing-haproxy
+wget https://haproxy.org/download/1.8/src/haproxy-1.8.4.tar.gz -O ~/haproxy.tar.gz
+tar xzvf ~/haproxy.tar.gz -C ~/
+cd ~/haproxy-1.8.4
+make TARGET=linux2628
+sudo make install
+sudo mkdir -p /etc/haproxy
+sudo mkdir -p /var/lib/haproxy 
+sudo mkdir -p /run/haproxy
+sudo touch /var/lib/haproxy/stats
+sudo ln -s /usr/local/sbin/haproxy /usr/sbin/haproxy
+sudo cp ~/haproxy-1.8.4/examples/haproxy.init /etc/init.d/haproxy
+sudo chmod 755 /etc/init.d/haproxy
+sudo systemctl daemon-reload
+sudo chkconfig haproxy on
+sudo useradd -r haproxy
+# sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+###-PHP
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+sudo yum install yum-plugin-replace -y
+sudo yum replace php-common --replace-with=php72w-common -y
+#sudo yum install php72w-fpm php72w-mbstring php72w-opcache php72w-dom php72w-xml php72w-gd -y
+sudo yum install php72w php72w-fpm php72w-cli php72w-common php72w-devel php72w-dom \
+php72w-gd php72w-intl php72w-mbstring php72w-mcrypt \
+php72w-mysqlnd php72w-odbc php72w-opcache php72w-pdo \
+php72w-pdo_dblib php72w-pear php72w-pgsql php72w-pspell php72w-soap php72w-process \
+php72w-bz2 php72w-calendar php72w-core php72w-ctype php72w-curl php72w-date php72w-exif php72w-fileinfo php72w-pecl-Fileinfo php72w-filter php72w-ftp php72w-gettext php72w-gmp php72w-hash php72w-mhash php72w-iconv php72w-json php72w-pecl-json php72w-libxml php72w-openssl php72w-pecl-phar php72w-phar php72w-pcre php72w-reflection php72w-session php72w-shmop php72w-simplexml php72w-sockets php72w-spl php72w-standard php72w-tokenizer php72w-zip php72w-pecl-zip php72w-zlib php72w-common php72w-soap php72w-xml php72w-xmlrpc php72w-bcmath -y
+#--
+wget -O php-7.2.3.tar.bz2 http://de2.php.net/get/php-7.2.3.tar.bz2/from/this/mirror
+tar -jxvf php-7.2.3.tar.bz2
+cd php-7.2.3
+./configure --with-libdir=lib64 --enable-bcmath --with-bz2 --enable-calendar --with-curl --enable-exif --enable-ftp --with-gd --with-jpeg-dir --with-png-dir --with-freetype-dir --enable-gd-native-ttf --with-imap --with-imap-ssl --with-kerberos --enable-mbstring --with-mcrypt --with-mhash --with-mysql --with-mysqli --with-openssl --with-pcre-regex --with-pdo-mysql --with-zlib-dir --with-regex --enable-sysvsem --enable-sysvshm --enable-sysvmsg --enable-soap --enable-sockets --with-xmlrpc --enable-zip --with-zlib --enable-inline-optimization --enable-mbregex --enable-opcache --enable-fpm --prefix=/usr/local/php
+make
+make install
+# ---
+sudo yum install php72w php72w-fpm php72w-cli php72w-common php72w-devel php72w-dom \
+php72w-gd php72w-intl php72w-mbstring php72w-mcrypt \
+php72w-mysqlnd php72w-odbc php72w-opcache php72w-pdo \
+php72w-pdo_dblib php72w-pear php72w-pgsql php72w-pspell php72w-soap php72w-process \
+php72w-bz2 php72w-calendar php72w-core php72w-ctype php72w-curl php72w-date php72w-exif php72w-fileinfo php72w-pecl-Fileinfo php72w-filter php72w-ftp php72w-gettext php72w-gmp php72w-hash php72w-mhash php72w-iconv php72w-json php72w-pecl-json php72w-libxml php72w-openssl php72w-pecl-phar php72w-phar php72w-pcre php72w-reflection php72w-session php72w-shmop php72w-simplexml php72w-sockets php72w-spl php72w-standard php72w-tokenizer php72w-zip php72w-pecl-zip php72w-zlib php72w-common php72w-soap php72w-xml php72w-xmlrpc php72w-bcmath --enable-sysvsem --enable-sysvshm --enable-sysvmsg --enable-soap --enable-sockets --enable-zip --with-zlib --enable-inline-optimization --enable-mbregex --enable-opcache --enable-fpm  -y
+# removed: --enable-sysvsem --enable-sysvshm --enable-sysvmsg
+###-PHP 5.4.x 
+wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-11.noarch.rpm
+wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+#rpm -Uvh epel-release-7*.rpm
+rpm -Uvh remi-release-7*.rpm
+sudo yum remove php php-fpm php72w-common -y
+sudo yum install php php-gd php-mysql php-mcrypt php-fpm php-mbstring -y
+###-PHP 5.6.x
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+sudo yum remove php php-gd php-mysql php-mcrypt php-fpm php-mbstring php-common -y
+yum install php56w php56w-opcache php56w-mysql php56w-mcrypt php56w-fpm php56w-mbstring -y
+###-PHP 7.2.x
+yum remove php56w php56w-opcache php56w-mysql php56w-mcrypt php56w-fpm php56w-mbstring php56w-common -y
+###-Mysql 5.6
+yum remove mariadb
+rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+yum repolist enabled | grep "mysql.*-community.*"
+sudo yum-config-manager --disable mysql57-community
+sudo yum-config-manager --enable mysql56-community
+yum repolist enabled | grep mysql
+yum install mysql-community-server
+sudo service mysqld start
+###-MariaDB(mysql)
+cat >> /etc/yum.repos.d/mariadb.repo << EOF
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.3.4/rhel7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+EOF
+sudo yum update -y
+sudo yum install MariaDB-server MariaDB-client -y
+###-nginx
+cd
+rm -rf nginx-* ngx_brotli* master.* ngx_* nginx_a* release-* v1.1* incubator*
+wget https://github.com/giom/nginx_accept_language_module/archive/master.zip
+unzip master.zip
+git clone https://github.com/google/ngx_brotli
+cd ngx_brotli
+git submodule update --init --recursive
+cd
+Y | bash <(curl -f -L -sS https://ngxpagespeed.com/install) \
+     --nginx-version latest \
+     --ngx-pagespeed-version latest-beta \
+     --additional-nginx-configure-arguments '--add-module=$HOME/ngx_brotli --add-module=$HOME/nginx_accept_language_module-master --prefix=/usr/local/nginx --conf-path=/etc/nginx/nginx.conf --with-pcre-jit  --with-http_ssl_module --with-http_v2_module --with-http_gzip_static_module --with-http_perl_module --with-http_gunzip_module  --with-http_stub_status_module --sbin-path=/usr/local/sbin --error-log-path=/var/log/nginx/error.log' -y
+cat >> /lib/systemd/system/nginx.service << EOF
+[Unit]
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/usr/local/sbin/nginx -t
+ExecStart=/usr/local/sbin/nginx
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+rm -rf nginx-* ngx_brotli* master.* ngx_* nginx_a* release-* v1.1* incubator*
+###update
+sudo yum update -y
+sudo yum install php72w-fpm php72w-opcache -y
+### EDIT nginx.conf file
+###add-to-startup
+sudo systemctl enable fail2ban
+sudo systemctl enable yum-cron
+sudo systemctl enable nginx
+sudo systemctl enable php-fpm
+sudo systemctl enable mariadb
+sudo systemctl enable firewalld
+
+sudo systemctl start fail2ban
+sudo systemctl start yum-cron
+sudo systemctl start php-fpm
+sudo systemctl start mariadb
+sudo systemctl start firewalld
+
+###firewalld-config(edit-this)
+### find interface first with ip link show
+sudo firewall-cmd --zone=public --change-interface=eth0
+sudo firewall-cmd --zone=public --permanent --add-port=80/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=443/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=22/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=25/tcp
+sudo firewall-cmd --reload
+
+###manual: set mysql password | configure nginx,mysql,php,php-fpm
+
+sudo systemctl stop php-fpm
+sudo systemctl stop mariadb
+sudo systemctl stop nginx
+
+speedus systemctl start php-fpm
+speedus systemctl start mariadb
+speedus systemctl start nginx
+
+#get-certificate:
+#https://certbot.eff.org/#centosrhel7-nginx
+sudo yum install certbot-nginx -y
+#https://hypatiasoftware.org/2016/07/06/httpsssl-made-easy-with-certbot/
+git clone https://github.com/certbot/certbot.git
+cd certbot
+service nginx stop
+./letsencrypt-auto --debug certonly --standalone -d western24.de -d www.western24.de
+
+#MYSQL
+#CREATE USER 'piwiki'@'localhost' IDENTIFIED BY 'password';
+#GRANT ALL PRIVILEGES ON * . * TO 'piwiki'@'localhost';
+#CREATE DATABASE modifiedDB;
+#
+#user - create
+# sudo groupadd nginx
+# sudo useradd -g nginx nginx
+
+#USER - set owner / set permission
+# chown nginx:nginx -R /usr/local/nginx/html/shoproot
+# chmod -R 777 /usr/local/nginx/html/shoproot
+#
