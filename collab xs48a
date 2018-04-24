@@ -1,0 +1,61 @@
+yum install nano -y
+nano /etc/ssh/sshd_config
+    # new port <newPort>
+systemctl restart sshd
+sudo yum install epel-release -y
+sudo yum install fail2ban -y
+sudo systemctl enable fail2ban
+sudo yum -y install yum-cron
+sudo systemctl start yum-cron
+​sudo systemctl enable yum-cron
+sudo nano /etc/yum/yum-cron.conf
+    #update_cmd = security
+    #apply_updates = yes
+sudo systemctl restart yum-cron
+sudo nano /etc/fail2ban/jail.local
+    [DEFAULT]
+    # Ban hosts for one hour:
+    bantime = 3600
+
+    # Override /etc/fail2ban/jail.d/00-firewalld.conf:
+    banaction = iptables-multiport
+
+    [sshd]
+    enabled = true
+sudo systemctl restart fail2ban
+    
+#Turn firewalld off and iptables on
+systemctl status firewalld # current status of firewalld
+systemctl mask firewalld  # prevent it from starting. mask is more powerful than disable
+systemctl stop firewalld
+sudo yum install iptables-services -y
+systemctl enable iptables # start on boot
+systemctl start iptables
+systemctl status iptables
+systemctl stop iptables
+iptables -F  # flush all chains | iptables -L # list rules
+iptables-save > /etc/sysconfig/iptables  # update the on-boot rules
+#Rules iptables: | list devices: ip link | replace eth0 with correct device AND set correct ports
+iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+#iptables logging:
+iptables -N LOGINPUT
+iptables -N LOGOUTPUT
+iptables -A INPUT -j LOGINPUT
+iptables -A OUTPUT -j LOGOUTPUT
+iptables -A LOGINPUT -m limit --limit 4/min -j LOG --log-prefix "DROP INPUT: " --log-level 4
+iptables -A LOGOUTPUT -m limit --limit 4/min -j LOG --log-prefix "DROP OUTPUT: " --log-level 4
+#make rules whitelist
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+
+#nginx
+yum install openssl-devel -y
+sudo yum install nmap -y
+#scan for ports:
+#nmap -sT -O localhost
+#resolve hostname: dig +short url
+bash <(curl -f -L -sS https://ngxpagespeed.com/install) --nginx-version latest
+# --with-http_ssl_module --with-http_ssi_module --with-http_gzip_module --with-ngx_brotli
+# https://www.nginx.com/resources/wiki/start/topics/examples/systemd/ start script
