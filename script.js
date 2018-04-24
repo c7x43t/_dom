@@ -103,12 +103,11 @@
 	function equipSingle(node){
 		node.on=(str,fn,bool)=>on(node,str,fn,bool);
 		node.off=(str,fn)=>off(node,str,fn);
+		node.find=(selector)=>fastQuery(node,selector);
 		return node;
 	}
 	// equip nodeList
 	function equip(nodeList){
-		//if(nodeList.length===0) return nodeList;
-		// map=fn=>a.map(e=>fn(arguments));
 		nodeList.map=(fn,cond)=>fastMap(nodeList,fn,cond);
 		nodeList.reduce=(fn,init,cond)=>fastReduce(nodeList,fn,init,cond);
 		nodeList.filter=(fn,cond)=>fastFilter(nodeList,fn,cond);
@@ -149,7 +148,7 @@
 	}
 	// main
 	var $$=selector=>{
-		var nodeList=fastQuery(document,selector);
+		nodeList=typeof selector==="string"?fastQuery(document,selector):selector;
 		return equip(nodeList);
 	};
 	// ## public vars ##
@@ -174,15 +173,17 @@
 	$$.toggleClass=(el,className)=>{
 		$$.hasClass(el,className)?$$.removeClass(el,className):$$.addClass(el,className);
 	};
-	//
-	$$.isHover=e=>{
+	$$.isHover=e=>{// propably useless
 		return (e.parentElement.querySelector(':hover') === e);
 	};
+	$$.style=(el,pseudo)=>{
+		return window.getComputedStyle(el,pseudo?pseudo:null);
+	}
 	// ajax
 	$$.ajax=()=>{
 		
 	};
-	$$.query=(el,selector)=>fastQuery(el,selector);
+	$$.find=(el,selector)=>fastQuery(el,selector);
 	// map-reduce
 	$$.map=fastMap;
 	$$.reduce=fastReduce;
