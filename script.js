@@ -83,6 +83,7 @@
 		}else{
 			nodeList=el.querySelectorAll(selector)
 		}
+		if(nodeList===null) nodeList=document.createDocumentFragment().childNodes;
 		return nodeList;
 	}
 	// helper functions
