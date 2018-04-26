@@ -1,5 +1,6 @@
 (()=>{
 	// ## private vars ##
+	var NOOP=()=>{};
 	var regexPreFilter=/[.#]?-?[_a-zA-Z]+?[_a-zA-Z0-9-]*/;
 	var regexSpaceFilter=/ /;
 	// ## private functions ##
@@ -108,6 +109,39 @@
 		}
 	    }
 	    return str;
+	}
+	// AJAX
+	function post(url,data,success,error){
+		ajax({
+			type:"POST",
+			url:url,
+			success:success,
+			error:error,
+			data:data,
+		});
+	}
+	function get(url,success,error){
+		ajax({
+			type:"GET",
+			url:url,
+			success:success,
+			error:error,
+		});
+	}
+	function ajax(data){
+		if(!data.success) data.success=NOOP;
+		if(!data.error) data.error=NOOP;
+		var req = new XMLHttpRequest();
+		req.open(data.type, data.url, true);
+		req.onload = function() {
+		  if (req.status >= 200 && req.status < 400) {
+			data.success(req.response);
+		  } else {
+			// We reached our target server, but it returned an error
+		  }
+		};
+		req.onerror = error;
+		data.type==="POST"?req.send(data.data):req.send;
 	}
 	// equip single
 	function equipSingle(node){
