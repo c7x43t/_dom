@@ -84,7 +84,7 @@
 			nodeList=el.querySelectorAll(selector)
 		}
 		if(nodeList===null) nodeList=document.createDocumentFragment().childNodes;
-		return nodeList;
+		return nodeList.length?nodeList:[nodeList];
 	}
 	// helper functions
 	function on(el,str,fn,bool){
@@ -99,6 +99,15 @@
 	function off(el,str,fn){
 		el.removeEventListener(str,fn);
 		return el;
+	}
+	function serialize(form){
+	    var str="";
+	    for(el of form.querySelectorAll("*")){
+		if(el.name&&el.value){
+		    str+=el.name+"="+el.value+"&";
+		}
+	    }
+	    return str;
 	}
 	// equip single
 	function equipSingle(node){
@@ -189,6 +198,7 @@
 	$$.map=fastMap;
 	$$.reduce=fastReduce;
 	$$.filter=fastFilter;
+	$$.serialize=serialize;
 	// export
 	window.$$=$$;
 })();
