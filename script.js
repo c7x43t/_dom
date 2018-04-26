@@ -224,9 +224,9 @@
 		return window.getComputedStyle(el,pseudo?pseudo:null);
 	}
 	// ajax
-	$$.ajax=()=>{
-		
-	};
+	$$.ajax=ajax;
+	$$.get=get;
+	$$.post=post;
 	$$.find=(el,selector)=>fastQuery(el,selector);
 	// map-reduce
 	$$.map=fastMap;
