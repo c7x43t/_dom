@@ -4,12 +4,64 @@
     const regexPreFilter = /[.#]?-?[_a-zA-Z]+?[_a-zA-Z0-9-]*/;
     const regexCommaDelimiter=/ *, */;
     const regexSpaceDelimiter=/ +/;
+    // SORTING
+    const quickSort = (function() {
+        var i = 0;
+        function swap(first, second, array) {
+            var temp = array[first];
+            array[first] = array[second];
+            array[second] = temp;
+        }
+        return function(array) {
+            for (var len = array.length - 1; i < len; i++) {
+                if (array[i] > array[i + 1]) {
+                    swap(i, i + 1, array);
+                    i = -1;
+                }
+            }
+            return array;
+        };
+    })();
+    // DEEP CLONING
+    function deepCopy(o) {
+        if (typeof o !== "object" || o === null) return o; // fast obj/null test
+        let n;
+        if (o instanceof Array) { // fast array test
+            const l = o.length;
+            n = [];
+            for (let i = 0; i < l; i++) n[i] = deepCopy(o[i]);
+            return n
+        }
+        n = {};
+        for (let i in o)
+            if (!!o[i]) n[i] = deepCopy(o[i]); // fast hasProperty test
+        return n
+    }
+    // COOKIES
+    function getCookies(){
+        const cookies={};
+        let cookie;
+    document.cookie.split(/; */).map(e=>{
+            cookie=e.split("=");
+        cookies[cookie[0]]=cookie[1];
+        });
+        return cookies;
+    }
+    function getCookie(name){
+        return getCookies()[name];
+    }
+    function setCookie(name,value){
+        document.cookie=name+"="+value;
+    }
+    function existsCookie(name){
+        return !!getCookie(name);
+    }
     // ## private functions ##
     // fast functions based on: https://github.com/codemix/fast.js/
     // fast Map
     function fastMap(subject, fn, test) {
-        const length = subject.length,
-            result = new Array(length),
+        const length = subject.length;
+        let result = new Array(length),
             i;
         if (!test) {
             for (i = 0; i < length; i++) {
@@ -25,8 +77,8 @@
     }
     // fast Reduce
     function fastReduce(subject, fn, initialValue, test) {
-        const length = subject.length,
-            i, result;
+        const length = subject.length;
+        let i, result;
 
         if (initialValue === undefined) {
             i = 1;
@@ -49,8 +101,8 @@
     }
     // fast Filter
     function fastFilter(subject, fn, test) {
-        const length = subject.length,
-            result = [],
+        const length = subject.length;
+        let result = [],
             i;
         if (!test) {
             for (i = 0; i < length; i++) {
@@ -209,8 +261,13 @@
     }
     // main
     var $$ = selector => {
-        const nodeList = typeof selector === "string" ? fastQuery(document, selector) : selector;
-        return equip(nodeList);
+        if(typeof selector === "string" ){
+            return equip(fastQuery(document, selector));
+        }else if(selector instanceof NodeList){
+            return equip(selector)
+        }else if(selector instanceof Node){
+            return equipSingle(selector);
+        }
     };
     // ## public vars ##
     $$.addClass = (el, className) => {
@@ -234,13 +291,18 @@
     $$.style = (el, pseudo) => {
         return window.getComputedStyle(el, pseudo ? pseudo : null);
     };
+    $$.find = (el, selector) => fastQuery(el, selector);
+    $$.exists = (e) => fastQuery(document, e).hasOwnProperty("length");
+    // cookies
+    $$.getCookies=getCookies;
+    $$.getCookie=getCookie;
+    $$.setCookie=setCookie;
+    $$.existsCookie=existsCookie;
     // ajax
     $$.ajax = ajax;
     $$.get = get;
     $$.getJSON = getJSON;
     $$.post = post;
-    $$.find = (el, selector) => fastQuery(el, selector);
-    $$.exists = (e) => fastQuery(document, e).hasOwnProperty("length");
     // map-reduce
     $$.map = fastMap;
     $$.reduce = fastReduce;
