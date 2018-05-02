@@ -162,9 +162,11 @@
         selector
         .split(regexCommaDelimiter)
         .map(e=>{
-            sel=e.split(regexSpaceDelimiter);
-            sel.map(s=>{
-                if(regexPreFilter.exec(s)&&s!==""){
+            var sel=e
+			.split(regexSpaceDelimiter)
+            .map(s=>{
+				let filtered=regexPreFilter.exec(s);
+                if(filtered&&filtered.length===s.length&&s!==""){
                     if (s[0] === ".") {
                         nodes = el.getElementsByClassName(s.replace('.', ''));
                     } else if (s[0] === "#") {
