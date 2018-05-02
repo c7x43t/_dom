@@ -56,6 +56,41 @@
     function existsCookie(name){
         return !!getCookie(name);
     }
+    // FORM SERIALIZATION
+    function serializeToObject(form){ // takes string, Node or NodeList (first Element)
+        form = form instanceof Node ? form : form instanceof NodeList ? form[0] : $$(form)[0];
+        if (!form || form.nodeName !== "FORM") return;
+        var el, op, obj = {}, name, type, value, node;
+        for (el of form.elements) {
+            name=el.name;
+            if (name === "") continue;
+            type=el.type;
+            value=el.value;
+            node=el.nodeName;
+            if(/INPUT/.exec(node) && (/text|hidden|password|button|reset|submit/.exec(type) || /checkbox|radio/.exec(type)&&el.checked) || 
+            /TEXTAREA/.exec(node) || 
+            /SELECT/.exec(node) && /select-one/.exec(node) || 
+            /BUTTON/.exec(node) && /reset|submit|button/.exec(type)){
+                obj[name] = encodeURIComponent(value);
+            }else if(/SELECT/.exec(node) && /select-multiple/.exec(node)){
+                for (op of el.options) {
+                    if (op.selected) {
+                        obj[name] = encodeURIComponent(op.value);
+                    }
+                }
+            }
+        }
+        return obj;
+    }
+    function serializeObject(obj){
+        let keys=Object.keys(obj);
+        let str="";
+        for(let key of keys){
+            str+=key+"="+obj[key]+"&";
+        }
+        str=str.slice(0,str.length-1);
+        return str;
+    }
     // ## private functions ##
     // fast functions based on: https://github.com/codemix/fast.js/
     // fast Map
@@ -160,16 +195,6 @@
     function off(el, str, fn) {
         el.removeEventListener(str, fn);
         return el;
-    }
-
-    function serialize(form) {
-        let str = "";
-        for (var el of form.querySelectorAll("*")) {
-            if (el.name && el.value) {
-                str += el.name + "=" + el.value + "&";
-            }
-        }
-        return str;
     }
     // AJAX
     function post(url, data, success, error) {
@@ -288,11 +313,39 @@
     $$.isHover = e => { // propably useless
         return (e.parentElement.querySelector(':hover') === e);
     };
+    $$.after = (el, str)=>el.insertAdjacentHTML('afterend', str);
+    $$.before = (el, str)=>el.insertAdjacentHTML('beforebegin', str);
+    $$.append = (el, child)=>el.appendChild(child);
+    $$.prepend = (el, child)=>el.insertBefore(child, el.firstChild);
+    $$.remove = (el)=>el.parentNode.removeChild(el);
+    $$.replace = (el, str)=>el.outerHTML=str;
+    $$.clone = (el)=>el.cloneNode(true);
+    $$.empty = (el)=>el.innerHTML='';
+    $$.attr = (el, name, value)=>value?el.setAttribute(name,value):el.getAttribute(name);
+    $$.css = (el, name, value)=>value?el.style[name]=value:getComputedStyle(el)[name];
+    $$.html = (el, str)=>str?el.innerHTML=str:el.innerHTML;
+    $$.text = (el,str)=>str?el.textContent=str:el.textContent; 
+    $$.next = (el)=>el.nextElementSibling;
+    $$.prev = (el)=>el.previousElementSibling;
+    $$.offset = (el)=>{
+        var rect = el.getBoundingClientRect();
+        return {
+            top: rect.top + document.body.scrollTop,
+            left: rect.left + document.body.scrollLeft,
+            bottom: rect.bottom + document.body.scrollTop,
+            right: rect.right + document.body.scrollLeft,
+        }
+    };
+    $$.parent=()=>e.parentNode;
+    $$.siblings=()=>fastFilter(e.parentNode.children,child=>child !== e);
+    $$.position=()=>{return{left: e.offsetLeft, top: e.offsetTop}};
     $$.style = (el, pseudo) => {
         return window.getComputedStyle(el, pseudo ? pseudo : null);
     };
     $$.find = (el, selector) => fastQuery(el, selector);
     $$.exists = (e) => fastQuery(document, e).hasOwnProperty("length");
+    // DOMReady event
+    $$.DOMReady = (fn) => $$(document).on("DOMContentLoaded",fn);
     // cookies
     $$.getCookies=getCookies;
     $$.getCookie=getCookie;
@@ -307,7 +360,7 @@
     $$.map = fastMap;
     $$.reduce = fastReduce;
     $$.filter = fastFilter;
-    $$.serialize = serialize;
+    $$.serialize = e=>serializeObject(serializeToObject(e));
     // export
     window.$$ = $$;
 })();
