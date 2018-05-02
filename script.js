@@ -343,7 +343,7 @@
         return window.getComputedStyle(el, pseudo ? pseudo : null);
     };
     $$.find = (el, selector) => fastQuery(el, selector);
-    $$.exists = (e) => fastQuery(document, e).hasOwnProperty("length");
+    $$.exists = (e) => {var el=fastQuery(document,e);return el.hasOwnProperty("length")&&el.length>0};
     // DOMReady event
     $$.DOMReady = (fn) => $$(document).on("DOMContentLoaded",fn);
     // cookies
