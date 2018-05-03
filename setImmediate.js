@@ -1,4 +1,5 @@
 // FF, chrome, IE11
+// from https://github.com/YuzuJS/setImmediate
 (function (global, undefined) {
     "use strict";
 
