@@ -85,7 +85,8 @@ function newStream(){
     stream.observe=function(observable){
         observable.subscribe(stream);
     }
-
+    function wrapCallback(){ //https://github.com/adriaan-pelzer/highland-wrapCallback
+    }
     return stream;
 }
 //Test
