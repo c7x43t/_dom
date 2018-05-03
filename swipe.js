@@ -1,3 +1,4 @@
+// GOAL: https://www.npmjs.com/package/pure-swipe-js
 const limit = Math.cos(Math.PI * (3 / 8));
 let pageWidth = window.innerWidth || document.body.clientWidth;
 let treshold = Math.floor(0.01 * (pageWidth));
