@@ -8,6 +8,7 @@ let touchstartY = 0;
 let touchendX = 0;
 let touchendY = 0;
 const gestureZone = document; //.getElementById('modalContent');
+
 gestureZone.addEventListener('touchstart', function(event) {
     touchstartX = event.changedTouches[0].screenX;
     touchstartY = event.changedTouches[0].screenY;
@@ -34,7 +35,7 @@ function vecAngle(a, b) {
 function handleGesture() {
     const vec = [touchendX - touchstartX, touchendY - touchstartY];
     const angle = [vecAngle(vec, [1, 0]), vecAngle(vec, [0, 1])];
-    if (!(isNaN(angle[0]) && isNaN(angle[1])) && !(Math.abs(vec[0]) < treshold && Math.abs(vec[1]) < treshold)) {
+    if (!(isNaN(angle[0]) && isNaN(angle[1]) || Math.abs(vec[0]) < treshold && Math.abs(vec[1]) < treshold)) {
         if (angle[0] <= -limit) {
             console.log('Swiped left');
         } else if (angle[0] >= limit) {
