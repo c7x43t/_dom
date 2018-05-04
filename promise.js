@@ -37,7 +37,6 @@ function newPromise(fn){
         fnCatch=fn;
         return promise;
     }
-    // immediate async execution
     fn(resolve,reject);
     return promise;
 }
