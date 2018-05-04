@@ -7,8 +7,10 @@ function newPromise(fn){
     function resolve(value){
         promise["[[PromiseStatus]]"]="resolved";
         promise["[[PromiseValue]]"]=value;
-        if(fnThen) fnThen(value);
-        initialize();
+        if(fnThen){
+            fnThen(value);
+            initialize();
+        }
         if(fnFinally) fnFinally();
     }
     function reject(reason){
@@ -16,11 +18,11 @@ function newPromise(fn){
         promise["[[PromiseStatus]]"]="rejected";
         promise["[[PromiseValue]]"]=reason;
         if(fnCatch){
-            fnCatch(reason);    
+            fnCatch(reason);
+            initialize();
         }else{
             throw reason;
         }
-        initialize();
         if(fnFinally) fnFinally();    
     }
     function initialize(){
@@ -37,6 +39,9 @@ function newPromise(fn){
         return promise;
     }
     promise.finally=function(fn){
+        if(promise["[[PromiseStatus]]"]!=="pending"){
+            fn();
+        }
         fnFinally=fn;
         // what to return?
     }
