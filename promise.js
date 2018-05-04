@@ -1,5 +1,4 @@
 function newPromise(fn){
-    let NOOP=e=>{};
     let fnThen=undefined;
     let fnCatch=undefined;
     let reason=undefined;
