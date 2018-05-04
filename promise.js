@@ -66,3 +66,4 @@ function newPromise(fn){
     fn(resolve,reject);
     return promise;
 }
+ 
