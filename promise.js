@@ -67,3 +67,4 @@ function newPromise(fn){
     return promise;
 }
  
+  
