@@ -1,12 +1,15 @@
 function newPromise(fn){
     let fnThen=undefined;
     let fnCatch=undefined;
+    let fnFinally=undefined;
     let reason=undefined;
     let self=this;
     function resolve(value){
         promise["[[PromiseStatus]]"]="resolved";
         promise["[[PromiseValue]]"]=value;
         if(fnThen) fnThen(value);
+        initialize();
+        if(fnFinally) fnFinally();
     }
     function reject(reason){
         self.reason=reason;
@@ -17,10 +20,15 @@ function newPromise(fn){
         }else{
             throw reason;
         }
+        initialize();
+        if(fnFinally) fnFinally();    
+    }
+    function initialize(){
+        promise["[[PromiseStatus]]"]="pending";
+        promise["[[PromiseValue]]"]=undefined;
     }
     let promise={};
-    promise["[[PromiseStatus]]"]="pending";
-    promise["[[PromiseValue]]"]=undefined;
+    initialize();
     promise.then=function(fn){
         if(promise["[[PromiseStatus]]"]==="resolved"){
             fn(promise["[[PromiseStatus]]"]);
@@ -28,7 +36,10 @@ function newPromise(fn){
         fnThen=fn;
         return promise;
     }
-    promise.finally=function(fn){}
+    promise.finally=function(fn){
+        fnFinally=fn;
+        // what to return?
+    }
     promise.catch=function(fn){
         if(promise["[[PromiseStatus]]"]==="rejected"){
             fn(reason);
