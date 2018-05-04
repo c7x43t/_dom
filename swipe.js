@@ -1,3 +1,4 @@
+// FROM: https://gist.github.com/SleepWalker/da5636b1abcbaff48c4d
 // GOAL: https://www.npmjs.com/package/pure-swipe-js
 const limit = Math.cos(Math.PI * (3 / 8));
 let pageWidth = window.innerWidth || document.body.clientWidth;
