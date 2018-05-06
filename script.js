@@ -1,3 +1,7 @@
+/* 
+TODO:
+$$.each // like map but returns original array
+*/
 (() => {
     // ## private vars ##
     const NOOP = () => {};
