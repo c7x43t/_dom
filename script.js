@@ -161,6 +161,7 @@ $$.each // like map but returns original array
     }
     // faster than querySelectorAll (in most cases)
     function fastQuery(el, selector) {
+	    return el.querySelectorAll(selector);
         const nodeList=[];
         let nodes;
         selector
