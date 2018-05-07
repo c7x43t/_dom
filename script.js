@@ -86,6 +86,7 @@ $$.each // like map but returns original array
         }
         return obj;
     }
+    // serialize to String from Object returned by serializeToObject()
     function serializeObject(obj){
         let keys=Object.keys(obj);
         let str="";
