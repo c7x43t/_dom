@@ -1,13 +1,14 @@
+const undef=void 0; // substitute for undefined
 function newPromise(fn){
     const PROMISE_STATUS="[[PromiseStatus]]";
     const PROMISE_VALUE="[[PromiseValue]]";
 	const PENDING="pending";
 	const RESOLVED="resolved";
 	const REJECTED="rejected";
-    let fnThen=undefined;
-    let fnCatch=undefined;
-    let fnFinally=undefined;
-    let reason=undefined;
+    let fnThen=undef;
+    let fnCatch=undef;
+    let fnFinally=undef;
+    let reason=undef;
     let self=this;
     function resolve(value){
         promise[PROMISE_STATUS]=RESOLVED;
@@ -32,11 +33,11 @@ function newPromise(fn){
     }
     function initialize(){
         promise[PROMISE_STATUS]=PENDING;
-        promise[PROMISE_VALUE]=undefined;
-		fnThen=undefined;
-		fnCatch=undefined;
-		fnFinally=undefined;
-		reason=undefined;
+        promise[PROMISE_VALUE]=undef;
+		fnThen=undef;
+		fnCatch=undef;
+		fnFinally=undef;
+		reason=undef;
     }
     let promise={};
     initialize();
@@ -66,5 +67,3 @@ function newPromise(fn){
     fn(resolve,reject);
     return promise;
 }
- 
-  
