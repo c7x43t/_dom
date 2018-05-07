@@ -244,6 +244,7 @@ $$.each // like map but returns original array
             }
         };
         req.onerror = data.error;
+        if(data.beforeSend) data.beforeSend(req);
         data.type === "POST" ? req.send(data.data) : req.send();
     }
     // equip single
