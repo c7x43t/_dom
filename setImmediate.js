@@ -1,5 +1,9 @@
 // FF, chrome, IE11
 // from https://github.com/YuzuJS/setImmediate
+// TODO:
+// test Mutation Observer:
+// https://jsperf.com/setimmediate-polyfills/3
+// https://caniuse.com/#feat=mutationobserver
 (function (global, undefined) {
     "use strict";
 
