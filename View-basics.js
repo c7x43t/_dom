@@ -3,14 +3,16 @@
 var original = {
     "foo": "bar"
 };
-function prox(original){return new Proxy(original, {
-    get: function(target, name, receiver) {
-        var rv = target[name];
-        console.log(rv);
-      },
-	set: function(target, prop, value) {
-    console.log({ type: 'set', target, prop, value });
-    return Reflect.set(target, prop, value);
-  }}
-)};
+function prox(original){
+    return new Proxy(original, {
+        get: function(target, name, receiver) {
+            var rv = target[name];
+            console.log(rv);
+        },
+        set: function(target, name, value) {
+            console.log({ type: 'set', target, name, value });
+            return Reflect.set(target, name, value);
+        }
+    })
+};
 k=prox(original);
