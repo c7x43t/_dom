@@ -13,6 +13,6 @@ function prox(original){
             console.log({ type: 'set', target, name, value });
             return Reflect.set(target, name, value);
         }
-    })
-};
+    });
+}
 k=prox(original);
