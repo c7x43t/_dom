@@ -3,15 +3,15 @@
 // https://github.com/Reactive-Extensions/RxJS
 // https://highlandjs.org/
 function newStream(){
-    let store={};
-    let finite={}; // not yet implemented ~ once and more {fn.name:n}
-    let error={}; // currently no direct access to error channel
-    let buffers={};
-    let transforms=[];
-    let retryCount=0;
-    let retryMax=0;
-    let filtered=false;
-    let transformers={
+    var store={};
+    var finite={}; // not yet implemented ~ once and more {fn.name:n}
+    var error={}; // currently no direct access to error channel
+    var buffers={};
+    var transforms=[];
+    var retryCount=0;
+    var retryMax=0;
+    var filtered=false;
+    var transformers={
         map: function(data,fn){
             return fn(data);
         },
@@ -19,15 +19,15 @@ function newStream(){
             if(!fn(data)){
                 filtered=true;
             }
-        },
-    }
+        }
+    };
     function stream(data){
         // transform data
-        for(let transform of transforms){
+        for(var transform of transforms){
             data=transformers[transform.type](data,transform.fn);
         }
         // push data
-        let fns=Object.keys(store);
+        var fns=Object.keys(store);
         // iterate functions in store
         if(!filtered){
             for(var i=0;i<fns.length;i++){
@@ -42,7 +42,7 @@ function newStream(){
                         continue;
                     }
                     // push error to registered error channels
-                    let errs=Object.keys(error);
+                    var errs=Object.keys(error);
                     for(var j=0;j<errs.length;j++){
                         error[errs[j]](err);
                     }
@@ -55,36 +55,36 @@ function newStream(){
     stream.add=function(fn){
         store[fn.name]=fn;
         return stream;
-    }
+    };
     stream.remove=function(fn){ // returns true/false
         delete store[fn.name];
         return stream;
-    }
+    };
     stream.addError=function(fn){
         error[fn.name]=fn;
         return stream;
-    }
+    };
     stream.removeError=function(fn){ // returns true/false
         delete error[fn.name];
         return stream;
-    }
+    };
     //mimic API
     stream.subscribe=stream.add;
     stream.retry=function(n){
         retryMax=n;
-    }
+    };
     stream.fromEvent = function(obj,name){
-        obj.addEventListener(name,stream)
-    }
+        obj.addEventListener(name,stream);
+    };
     stream.map=function(fn){
-        transforms.push({type:"map",fn:fn})
-    }
+        transforms.push({type:"map",fn:fn});
+    };
     stream.filter=function(fn){
-        transforms.push({type:"filter",fn:fn})
-    }
+        transforms.push({type:"filter",fn:fn});
+    };
     stream.observe=function(observable){
         observable.subscribe(stream);
-    }
+    };
     function wrapCallback(){ //https://github.com/adriaan-pelzer/highland-wrapCallback
     }
     return stream;
