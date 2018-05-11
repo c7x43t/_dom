@@ -1,4 +1,4 @@
-// very fast minimal implementation of setImmediate polyfill using MutationObserver (4-10x faster than messageChannel)
+// very fast, minimal implementation of setImmediate polyfill using MutationObserver (4-10x faster than messageChannel)
 window.setImmediate=(function(){
 	var stack=[];
 	var handle=1;
