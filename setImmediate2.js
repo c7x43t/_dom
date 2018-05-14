@@ -1,4 +1,5 @@
 // very fast, minimal implementation of setImmediate polyfill using MutationObserver (4-10x faster than messageChannel)
+// https://github.com/Octane/setImmediate/blob/master/setimmediate.js
 window.setImmediate = (function() {
     var stack = [];
     var handle = 1;
