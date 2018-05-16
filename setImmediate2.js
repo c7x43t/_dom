@@ -35,6 +35,7 @@ window.setImmediate = (function() {
             fn.apply(undefined, args);
         }
     }
+
     function runner() {
         var item = stack.shift();
         if (ids.hasOwnProperty(item[2])) {
@@ -57,14 +58,14 @@ window.setImmediate = (function() {
         observedElement.setAttribute('a', '');
     }
     window.clearImmediate = function(id) {
-        ids[id]=null;
+        ids[id] = null;
         delete ids[id];
     };
     return function() {
         var fn = arguments[0];
         var args = [];
         for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
-        if(stack.length>=30) {
+        if (stack.length >= 30) {
             runner();
         }
         stack.push([fn, args, handle]);
