@@ -11,9 +11,6 @@ function memoize(fn) {
                 return val;
             }
         }
-   
-
-
 }
 
 function argumentsToArray(args) {
