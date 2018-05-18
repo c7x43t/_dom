@@ -282,7 +282,7 @@
         }
     }
 
-    // helper functions
+    // EventListener
     function on(el, str, fn, bool) {
         let noDefault = e => {
             e.preventDefault();
