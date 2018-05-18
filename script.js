@@ -98,75 +98,142 @@
         return str;
     }
     // fast functions based on: https://github.com/codemix/fast.js/
-    // fast Map
+    // # fast Map
     function fastMap(subject, fn, test) {
-        var length = subject.length,
-            result = new Array(length),
-            i;
-        if (!test) {
-            for (i = 0; i < length; i++) {
-                result[i] = fn(subject[i], i, subject);
+        if (subject instanceof Array || subject instanceof NodeList) { // Array map
+            var length = subject.length,
+                result = new Array(length),
+                i;
+            if (!test) {
+                for (i = 0; i < length; i++) {
+                    result[i] = fn(subject[i], i, subject);
+                }
+            } else {
+                for (i = 0; i < length; i++) {
+                    if (test(subject[i])) break;
+                    result[i] = fn(subject[i], i, subject);
+                }
             }
-        } else {
-            for (i = 0; i < length; i++) {
-                if (test(subject[i])) break;
-                result[i] = fn(subject[i], i, subject);
+            return equipArray(result);
+        } else { // Object map
+            var keys = Object.keys(subject),
+                length = keys.length,
+                i,
+                result = {};
+            if (!test) {
+                for (i = 0; i < length; i++) {
+                    result[keys[i]] = fn(subject[keys[i]], keys[i], subject);
+                }
+            } else {
+                for (i = 0; i < length; i++) {
+                    if (test(subject[keys[i]])) break;
+                    result[keys[i]] = fn(subject[keys[i]], keys[i], subject);
+                }
             }
+            return result
         }
-        return equipArray(result);
     }
-	function forEach(subject,fn,test){
-		fastMap(subject, fn, test) ;
-		return equipArray(subject);
-	}
-    // fast Reduce
-    function fastReduce(subject, fn, initialValue, test) {
-        var length = subject.length,
-            i, result;
 
-        if (initialValue === undefined) {
-            i = 1;
-            result = subject[0];
-        } else {
-            i = 0;
-            result = initialValue;
-        }
-        if (!test) {
-            for (; i < length; i++) {
-                result = fn(result, subject[i], i, subject);
+    function forEach(subject, fn, test) {
+        fastMap(subject, fn, test);
+        return equipArray(subject);
+    }
+    // # fast Reduce
+    function fastReduce(subject, fn, initialValue, test) {
+        if (subject instanceof Array || subject instanceof NodeList) { // Array reduce
+            var length = subject.length,
+                i,
+                result;
+
+            if (initialValue === undefined) {
+                i = 1;
+                result = subject[0];
+            } else {
+                i = 0;
+                result = initialValue;
             }
-        } else {
-            for (; i < length; i++) {
-                if (test(subject[i])) break;
-                result = fn(result, subject[i], i, subject);
+            if (!test) {
+                for (; i < length; i++) {
+                    result = fn(result, subject[i], i, subject);
+                }
+            } else {
+                for (; i < length; i++) {
+                    if (test(subject[i])) break;
+                    result = fn(result, subject[i], i, subject);
+                }
+            }
+        } else { // Object reduce
+            var keys = Object.keys(subject),
+                length = keys.length,
+                i,
+                result;
+            if (initialValue === undefined) {
+                i = 1;
+                result = subject[keys[0]];
+            } else {
+                i = 0;
+                result = initialValue;
+            }
+            if (!test) {
+                for (; i < length; i++) {
+                    result = fn(result, subject[keys[i]], keys[i], subject);
+                }
+            } else {
+                for (; i < length; i++) {
+                    if (test(subject[keys[i]])) break;
+                    result = fn(result, subject[keys[i]], keys[i], subject);
+                }
             }
         }
         return result;
     }
-    // fast Filter
+    // # fast Filter
     function fastFilter(subject, fn, test) {
-        var length = subject.length,
-            result = [],
-            i;
-        if (!test) {
-            for (i = 0; i < length; i++) {
-                if (fn(subject[i], i, subject)) {
-                    result.push(subject[i]);
+        if (subject instanceof Array || subject instanceof NodeList) { // Array filter
+            var length = subject.length,
+                result = [],
+                i;
+            if (!test) {
+                for (i = 0; i < length; i++) {
+                    if (fn(subject[i], i, subject)) {
+                        result.push(subject[i]);
+                    }
+                }
+            } else {
+                for (i = 0; i < length; i++) {
+                    if (test(subject[i])) break;
+                    if (fn(subject[i], i, subject)) {
+                        result.push(subject[i]);
+                    }
                 }
             }
-        } else {
-            for (i = 0; i < length; i++) {
-                if (test(subject[i])) break;
-                if (fn(subject[i], i, subject)) {
-                    result.push(subject[i]);
+            return equipArray(result);
+        } else { // Object filter
+            var keys = Object.keys(subject),
+                length = keys.length,
+                i,
+                result = {};
+            if (!test) {
+                for (i = 0; i < length; i++) {
+                    if (fn(subject[keys[i]], keys[i], subject)) {
+                        result[keys[i]] = (subject[keys[i]]);
+                    }
+                }
+            } else {
+                for (i = 0; i < length; i++) {
+                    if (test(subject[keys[i]])) break;
+                    if (fn(subject[keys[i]], keys[i], subject)) {
+                        result[keys[i]] = (subject[keys[i]]);
+                    }
                 }
             }
+            return result;
         }
-        return equipArray(result);
+
     }
     // faster than querySelectorAll (in most cases) #broken
     function fastQuery(el, selector) {
-		return el.querySelectorAll(selector);
+        return el.querySelectorAll(selector);
         return (!(selector instanceof Node || selector instanceof NodeList)) ? el.querySelectorAll(selector) : selector; //fix '[name=value]' add "," fix :hover
         var nodeList;
         if (regexPreFilter.exec(selector) && !regexSpaceFilter.exec(selector)) {
@@ -183,38 +250,37 @@
         }
         return nodeList; //nodeList.hasOwnProperty("length")?nodeList:[nodeList];
     }
-	// fullscreen API from: https://davidwalsh.name/fullscreen
-	function launchIntoFullscreen(element) {
-		if (element.requestFullscreen) {
-			element.requestFullscreen();
-		} else if (element.mozRequestFullScreen) {
-			element.mozRequestFullScreen();
-		} else if (element.webkitRequestFullscreen) {
-			element.webkitRequestFullscreen();
-		} else if (element.msRequestFullscreen) {
-			element.msRequestFullscreen();
-		}
-	}
+    // fullscreen API from: https://davidwalsh.name/fullscreen
+    function launchIntoFullscreen(element) {
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
 
-	function exitFullscreen() {
-		if (document.exitFullscreen) {
-			document.exitFullscreen();
-		} else if (document.mozCancelFullScreen) {
-			document.mozCancelFullScreen();
-		} else if (document.webkitExitFullscreen) {
-			document.webkitExitFullscreen();
-		}
-	}
+    function exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
 
-	function toggleFullscreen(element) {
-		if (document.fullscreenElement ||
-			document.webkitFullscreenElement || document.mozFullScreenElement) {
-			exitFullscreen();
-			launchIntoFullscreen(element);
-		} else {
-			launchIntoFullscreen(element);
-		}
-	}
+    function toggleFullscreen(element) {
+        if (document.fullscreenElement ||
+            document.webkitFullscreenElement || document.mozFullScreenElement) {
+            exitFullscreen();
+        } else {
+            launchIntoFullscreen(element);
+        }
+    }
 
     // helper functions
     function on(el, str, fn, bool) {
@@ -275,27 +341,28 @@
         }
         return data.type === "POST" ? req.send(data.data) : req.send();
     }
-	// get image dimensions
-	function getImgSize(imgSrc, callback) {
-		var newImg = new Image();
-		newImg.onload = function() {
-			callback && callback({
-				width: newImg.width,
-				height: newImg.height
-			})
-		}
-		newImg.src = imgSrc;
-	}
-	// equip object
-	function equipObject(obj){
-		if(!!obj.addEventListener) obj.on = (str, fn, bool) => on(obj, str, fn, bool);
-		if(!!obj.removeEventListener) obj.off = (str, fn) => off(obj, str, fn);
-		return obj;
-	}
-	// equip event
-	function equipEvent(e){
-		return e;
-	}
+    // get image dimensions
+    function getImgSize(imgSrc, callback) {
+        var newImg = new Image();
+        newImg.onload = function() {
+            callback && callback({
+                width: newImg.width,
+                height: newImg.height
+            })
+        }
+        newImg.src = imgSrc;
+    }
+    // equip object
+    function equipObject(obj) {
+        obj = equipArray(obj);
+        if (!!obj.addEventListener) obj.on = (str, fn, bool) => on(obj, str, fn, bool);
+        if (!!obj.removeEventListener) obj.off = (str, fn) => off(obj, str, fn);
+        return obj;
+    }
+    // equip event
+    function equipEvent(e) {
+        return e;
+    }
     // equip single
     function equipSingle(node) {
         node.on = (str, fn, bool) => on(node, str, fn, bool);
@@ -303,17 +370,17 @@
         node.find = (selector) => fastQuery(node, selector);
         return node;
     }
-	// equip Array 
-	function equipArray(arr){
-		arr.map = (fn, cond) => fastMap(arr, fn, cond);
-		arr.forEach = (fn,cond) => forEach(arr, fn, cond);
+    // equip Array 
+    function equipArray(arr) {
+        arr.map = (fn, cond) => fastMap(arr, fn, cond);
+        arr.forEach = (fn, cond) => forEach(arr, fn, cond);
         arr.reduce = (fn, init, cond) => fastReduce(arr, fn, init, cond);
         arr.filter = (fn, cond) => fastFilter(arr, fn, cond);
-		return arr;
-	}
+        return arr;
+    }
     // equip nodeList
     function equip(nodeList) {
-        nodeList=equipArray(nodeList);
+        nodeList = equipArray(nodeList);
         nodeList.html = str => { // experimental
             nodeList.map(el => str ? el.innerHTML = str : el.innerHTML);
             return nodeList;
@@ -329,22 +396,22 @@
                 off(el, str, fn);
             });
         };
-		nodeList.click = (fn,bool) => {
-			nodeList.on("click", fn, bool);
-			return nodeList;
-		}
+        nodeList.click = (fn, bool) => {
+            nodeList.on("click", fn, bool);
+            return nodeList;
+        }
         nodeList.get = n => {
             return equipSingle(nodeList[n]);
         };
-		nodeList.first = () =>{
-			return nodeList.get(0);
-		}
-		nodeList.last = () =>{
-			return nodeList.get(nodeList.length-1);
-		}
-		nodeList.parent = () =>{
-			return equip(fastMap(nodeList,e=>e.parentElement));
-		}
+        nodeList.first = () => {
+            return nodeList.get(0);
+        }
+        nodeList.last = () => {
+            return nodeList.get(nodeList.length - 1);
+        }
+        nodeList.parent = () => {
+            return equip(fastMap(nodeList, e => e.parentElement));
+        }
         // faster replace operations - EXPERIMENTAL
         // {fn} must return an element
         nodeList.map.replace = fn => {
@@ -371,28 +438,30 @@
             return equip(selector);
         } else if (selector instanceof Node) {
             return equipSingle(selector);
-        }else if (selector instanceof Event){
-			return equipEvent(selector);
-		}else if (typeof selector === "object"){
-			return equipObject(selector);
-		}
+        } else if (selector instanceof Event) {
+            return equipEvent(selector);
+        } else if (typeof selector === "object") {
+            return equipObject(selector);
+        }
     };
     // ## public vars ##
-	$$.mouse={}; // keep track of mouse position
-	on(document,"mousemove",e=>{$$.mouse={
-		x:e.x,
-		y:e.y,
-		pageX:e.pageX,
-		pageY:e.pageY,
-		clientX:e.clientX,
-		clientY:e.clientY
-	}});
-	$$.over=(el)=>{ // test if mouse is over element
-		const rect = el.getBoundingClientRect();
-		var x=$$.mouse.x;
-		var y=$$.mouse.y;
-		return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom;
-	};
+    $$.mouse = {}; // keep track of mouse position
+    on(document, "mousemove", e => {
+        $$.mouse = {
+            x: e.x,
+            y: e.y,
+            pageX: e.pageX,
+            pageY: e.pageY,
+            clientX: e.clientX,
+            clientY: e.clientY
+        }
+    });
+    $$.over = (el) => { // test if mouse is over element
+        const rect = el.getBoundingClientRect();
+        var x = $$.mouse.x;
+        var y = $$.mouse.y;
+        return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom;
+    };
     $$.addClass = (el, className) => {
         if (el.classList)
             el.classList.add(className);
@@ -429,13 +498,18 @@
     $$.replace = (el, str) => el.outerHTML = str;
     $$.clone = (el) => el.cloneNode(true);
     $$.empty = (el) => el.innerHTML = '';
-    $$.attr = (el, name, value) => value||value==="" ? el.setAttribute(name, value) : el.getAttribute(name);
+    $$.attr = (el, name, value) => value || value === "" ? el.setAttribute(name, value) : el.getAttribute(name);
     $$.css = (el, name, value) => value ? el.style[name] = value : getComputedStyle(el)[name];
     $$.html = (el, str) => str ? el.innerHTML = str : el.innerHTML;
     $$.text = (el, str) => str ? el.textContent = str : el.textContent;
     $$.next = (el) => el.nextElementSibling;
     $$.prev = (el) => el.previousElementSibling;
-	$$.scroll=e=>{return{top:window.pageYOffset,left:window.pageXOffset}}
+    $$.scroll = e => {
+        return {
+            top: window.pageYOffset,
+            left: window.pageXOffset
+        }
+    }
     $$.offset = (el) => {
         /* var rect = el.getBoundingClientRect();
         return {
@@ -444,9 +518,8 @@
             bottom: rect.bottom,//+window.pageYOffset,// + document.body.scrollTop,
             right: rect.right,//+window.pageXOffset,// + document.body.scrollLeft,
         }; */
-		return el.getBoundingClientRect();
+        return el.getBoundingClientRect();
     };
-
     $$.parent = (e) => e.parentNode;
     $$.siblings = (e) => fastFilter(e.parentNode.children, child => child !== e);
     $$.position = (e) => {
@@ -455,12 +528,7 @@
             top: e.offsetTop
         };
     };
-    /*$$.find = (el, selector) => fastQuery(el, selector);
-    $$.exists = (e) => {
-        var el = fastQuery(document, e);
-        return el.hasOwnProperty("length") && el.length > 0;
-    };*/
-	$$.find = (el, selector) => fastQuery(el, selector);
+    $$.find = (el, selector) => fastQuery(el, selector);
     $$.exists = (e) => {
         var el = document.querySelectorAll(e);
         return !!el.length && el.length > 0;
@@ -478,18 +546,18 @@
     $$.get = get;
     $$.getJSON = getJSON;
     $$.post = post;
-	// imageSize
-	$$.getImgSize=getImgSize;
-	// fullscreen
-	$$.enterFullscreen=launchIntoFullscreen;
-	$$.exitFullscreen=exitFullscreen;
-	$$.toggleFullscreen=toggleFullscreen;
+    // imageSize
+    $$.getImgSize = getImgSize;
+    // fullscreen
+    $$.enterFullscreen = launchIntoFullscreen;
+    $$.exitFullscreen = exitFullscreen;
+    $$.toggleFullscreen = toggleFullscreen;
     // local/session Storage
     $$.session = (name, value) => value ? sessionStorage.setItem(name, value) : sessionStorage.getItem(name);
     $$.local = (name, value) => value ? localStorage.setItem(name, value) : localStorage.getItem(name);
     // export map-reduce
     $$.map = fastMap;
-	$$.forEach = forEach;
+    $$.forEach = forEach;
     $$.reduce = fastReduce;
     $$.filter = fastFilter;
     // export
