@@ -500,7 +500,7 @@
     $$.empty = (el) => el.innerHTML = '';
     // Attributes
     $$.attr = (el, name, value) => value || value === "" ? el.setAttribute(name, value) : el.getAttribute(name);
-	$$.removeAttr =  (el,name) => el.removeAttribute(name);
+	$$.removeAttr =  (el,name) => el.removeAttribute(name); 
     $$.css = (el, name, value) => value ? el.style[name] = value : getComputedStyle(el)[name];
     $$.html = (el, str) => str ? el.innerHTML = str : el.innerHTML;
     $$.text = (el, str) => str ? el.textContent = str : el.textContent;
