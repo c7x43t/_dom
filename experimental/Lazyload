@@ -1,0 +1,10 @@
+#html:
+
+<img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="{{ _image }}" class="lazyload"/>
+<noscript><img src="{{ _image }}"/></noscript>
+
+#css:
+
+.no-js .lazyload{
+	display: none;
+}
