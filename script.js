@@ -430,6 +430,28 @@
         };
         return nodeList;
     }
+	function fireEvent(el,name){
+		if(!name){
+			name=el;
+			el=document;
+		}
+		var event;
+		if(document.createEvent){
+			if(Event){
+				event=new Event(name);
+			}else{
+				event = document.createEvent("Event");
+				event.initEvent(name, true, true);
+			}
+			event.eventName = name;
+			el.dispatchEvent(event);
+		}else{
+			event = document.createEventObject();
+			event.eventType = name;
+			event.eventName = name;
+			el.fireEvent("on" + event.eventType, event);
+		}
+	}
     // main
     var E = selector => {
         //nodeList = typeof selector === "string" ? fastQuery(document, selector) : selector;
@@ -464,14 +486,15 @@
 			top: window.pageYOffset,
             left: window.pageXOffset
 		};
-	}
+	});
 	E.size = {};
 	on(window,"resize load",e=>{
 		E.size = {
 			width:document.documentElement.clientWidth || body.clientWidth,
 			height:document.documentElement.clientHeight || body.clientHeight
 		};
-	}
+	});
+	E.event = fireEvent;
     E.over = (el) => { // test if mouse is over element
         const rect = el.getBoundingClientRect();
         var x = E.mouse.x;
