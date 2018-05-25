@@ -64,7 +64,7 @@
     }
     // FORM SERIALIZATION
     function serializeToObject(form) { // takes string, Node or NodeList (first Element)
-        form = form instanceof Node ? form : form instanceof NodeList ? form[0] : $$(form)[0];
+        form = form instanceof Node ? form : form instanceof NodeList ? form[0] : E(form)[0];
         if (!form || form.nodeName !== "FORM") return;
         var el, op, obj = {},
             name, type, value, node;
@@ -285,17 +285,17 @@
     }
 
     // EventListener
-    function on(el, str, fn, bool) {
-        let noDefault = e => {
-            e.preventDefault();
-            return fn;
-        };
-        el.addEventListener(str, bool ? noDefault : fn);
+    function on(el, str, fn, op) {
+		let noDefault = e => {
+			e.preventDefault();
+			return fn;
+		};
+		fastMap(str.split(" "),e=>el.addEventListener(e, op===true ? noDefault : fn, op instanceof Object ? op :undefined));
         return el;
     }
 
     function off(el, str, fn) {
-        el.removeEventListener(str, fn);
+        fastMap(str.split(" "),e=>el.removeEventListener(ee, fn));
         return el;
     }
     // AJAX
@@ -418,20 +418,20 @@
         // {fn} must return an element
         nodeList.map.replace = fn => {
             var nodes = Array.from(nodeList);
-            $$.map(nodes, e => {
+            E.map(nodes, e => {
                 var k = e.cloneNode(true);
                 fn(k);
                 //list.push(k);
                 e.parentNode.replaceChild(k, e);
             });
-            $$.map(nodes, (e, i) => {
+            E.map(nodes, (e, i) => {
                 //e.parentNode.replaceChild(list[i], e);
             });
         };
         return nodeList;
     }
     // main
-    var $$ = selector => {
+    var E = selector => {
         //nodeList = typeof selector === "string" ? fastQuery(document, selector) : selector;
         //return equip(nodeList);
         if (typeof selector === "string") {
@@ -447,9 +447,9 @@
         }
     };
     // ## public vars ##
-    $$.mouse = {}; // keep track of mouse position
+    E.mouse = {}; // keep track of mouse position
     on(document, "mousemove", e => {
-        $$.mouse = {
+        E.mouse = {
             x: e.x,
             y: e.y,
             pageX: e.pageX,
@@ -458,112 +458,114 @@
             clientY: e.clientY
         }
     });
-    $$.over = (el) => { // test if mouse is over element
+	E.scroll = {};
+	on(window,"scroll",e=>{
+		E.scroll = {
+			top: window.pageYOffset,
+            left: window.pageXOffset
+		};
+	}
+	E.size = {};
+	on(window,"resize load",e=>{
+		E.size = {
+			width:document.documentElement.clientWidth || body.clientWidth,
+			height:document.documentElement.clientHeight || body.clientHeight
+		};
+	}
+    E.over = (el) => { // test if mouse is over element
         const rect = el.getBoundingClientRect();
-        var x = $$.mouse.x;
-        var y = $$.mouse.y;
+        var x = E.mouse.x;
+        var y = E.mouse.y;
         return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom;
     };
-    $$.addClass = (el, className) => {
+    E.addClass = (el, className) => {
         if (el.classList)
             el.classList.add(className);
         else
             el.className += ' ' + className;
     };
-    $$.removeClass = (el, className) => {
+    E.removeClass = (el, className) => {
         if (el.classList)
             el.classList.remove(className);
         else
             el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
     };
-    $$.hasClass = (el, className) => {
+    E.hasClass = (el, className) => {
         if (el.classList)
             return el.classList.contains(className);
         else
             return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
     };
-    $$.toggleClass = (el, className) => {
-        return $$.hasClass(el, className) ? $$.removeClass(el, className) : $$.addClass(el, className);
+    E.toggleClass = (el, className) => {
+        return E.hasClass(el, className) ? E.removeClass(el, className) : E.addClass(el, className);
     };
-    $$.isHover = e => { // propably useless
+    /*E.isHover = e => { // propably useless
         return fastReduce(e.parentElement.querySelectorAll(':hover'), (acc, t) => e === t || acc, false);
-    };
-    $$.style = (el, pseudo) => {
-        return window.getComputedStyle(el, pseudo ? pseudo : null);
-    };
-
-    $$.after = (el, str) => el.insertAdjacentHTML('afterend', str);
-    $$.before = (el, str) => el.insertAdjacentHTML('beforebegin', str);
-    $$.append = (el, child) => el.appendChild(child);
-    $$.prepend = (el, child) => el.insertBefore(child, el.firstChild);
-    $$.remove = (el) => el.parentNode.removeChild(el);
-    $$.replace = (el, str) => el.outerHTML = str;
-    $$.clone = (el) => el.cloneNode(true);
-    $$.empty = (el) => el.innerHTML = '';
-    // Attributes
-    $$.attr = (el, name, value) => value || value === "" ? el.setAttribute(name, value) : el.getAttribute(name);
-	$$.removeAttr =  (el,name) => el.removeAttribute(name); 
-    $$.css = (el, name, value) => value ? el.style[name] = value : getComputedStyle(el)[name];
-    $$.html = (el, str) => str ? el.innerHTML = str : el.innerHTML;
-    $$.text = (el, str) => str ? el.textContent = str : el.textContent;
-    $$.next = (el) => el.nextElementSibling;
-    $$.prev = (el) => el.previousElementSibling;
-    $$.scroll = e => {
+    };*/
+    E.after = (el, str) => el.insertAdjacentHTML('afterend', str);
+    E.before = (el, str) => el.insertAdjacentHTML('beforebegin', str);
+    E.append = (el, child) => el.appendChild(child);
+    E.prepend = (el, child) => el.insertBefore(child, el.firstChild);
+    E.remove = (el) => el.parentNode.removeChild(el);
+    E.replace = (el, str) => el.outerHTML = str;
+    E.clone = (el) => el.cloneNode(true);
+    E.empty = (el) => el.innerHTML = '';
+    /*// Attributes get/set
+    E.attr = (el, name, value) => value || value === "" ? el.setAttribute(name, value) : el.getAttribute(name);*/
+    E.css = (el, name, value) => value&&value[0]!==":" ? el.style[name] = value : getComputedStyle(el,value?value:null)[name];
+    E.html = (el, str) => str ? el.innerHTML = str : el.innerHTML;
+    E.text = (el, str) => str ? el.textContent = str : el.textContent;
+    E.next = (el) => el.nextElementSibling;
+    E.prev = (el) => el.previousElementSibling;
+    /*E.scroll = e => {
         return {
             top: window.pageYOffset,
             left: window.pageXOffset
         }
-    }
-    $$.offset = (el) => {
-        /* var rect = el.getBoundingClientRect();
-        return {
-            top: rect.top,//+window.pageYOffset,// + document.body.scrollTop,
-            left: rect.left,//+window.pageXOffset,// + document.body.scrollLeft,
-            bottom: rect.bottom,//+window.pageYOffset,// + document.body.scrollTop,
-            right: rect.right,//+window.pageXOffset,// + document.body.scrollLeft,
-        }; */
+    }*/
+    E.offset = (el) => {
         return el.getBoundingClientRect();
     };
-    $$.parent = (e) => e.parentNode;
-    $$.siblings = (e) => fastFilter(e.parentNode.children, child => child !== e);
-    $$.position = (e) => {
+    E.parent = (e) => e.parentNode;
+    E.siblings = (e) => fastFilter(e.parentNode.children, child => child !== e);
+    E.position = (e) => {
         return {
             left: e.offsetLeft,
             top: e.offsetTop
         };
     };
-    $$.find = (el, selector) => fastQuery(el, selector);
-    $$.exists = (e) => {
-        var el = document.querySelectorAll(e);
+    E.find = (el, selector) => fastQuery(el, selector);
+    E.exists = (e) => {
+        var el = E(e);
         return !!el.length && el.length > 0;
     };
     // DOMReady event // # integrate on top - remove here
-    $$.ready = (fn) => $$(document).on("DOMContentLoaded", fn);
-    $$.load = (fn) => on(window, "load", fn);
+    E.ready = (fn) => E(document).on("DOMContentLoaded", fn);
+    E.load = (fn) => on(window, "load", fn);
     // cookies
-    $$.getCookies = getCookies;
-    $$.getCookie = getCookie;
-    $$.setCookie = setCookie;
-    $$.existsCookie = existsCookie;
+    E.getCookies = getCookies;
+    E.getCookie = getCookie;
+    E.setCookie = setCookie;
+    E.existsCookie = existsCookie;
     // ajax
-    $$.ajax = ajax;
-    $$.get = get;
-    $$.getJSON = getJSON;
-    $$.post = post;
+    E.ajax = ajax;
+    E.get = get;
+    E.getJSON = getJSON;
+    E.post = post;
     // imageSize
-    $$.getImgSize = getImgSize;
+    E.getImgSize = getImgSize;
     // fullscreen
-    $$.enterFullscreen = launchIntoFullscreen;
-    $$.exitFullscreen = exitFullscreen;
-    $$.toggleFullscreen = toggleFullscreen;
+    E.enterFullscreen = launchIntoFullscreen;
+    E.exitFullscreen = exitFullscreen;
+    E.toggleFullscreen = toggleFullscreen;
     // local/session Storage
-    $$.session = (name, value) => value ? sessionStorage.setItem(name, value) : sessionStorage.getItem(name);
-    $$.local = (name, value) => value ? localStorage.setItem(name, value) : localStorage.getItem(name);
+    E.session = (name, value) => value ? sessionStorage.setItem(name, value) : sessionStorage.getItem(name);
+    E.local = (name, value) => value ? localStorage.setItem(name, value) : localStorage.getItem(name);
     // export map-reduce
-    $$.map = fastMap;
-    $$.forEach = forEach;
-    $$.reduce = fastReduce;
-    $$.filter = fastFilter;
+    E.map = fastMap;
+    E.forEach = forEach;
+    E.reduce = fastReduce;
+    E.filter = fastFilter;
     // export
-    window.$$ = $$;
+    window.E = E;
 })();
