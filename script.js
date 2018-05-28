@@ -287,16 +287,16 @@
 
     // EventListener
     function on(el, str, fn, op) {
-		let noDefault = e => {
-			e.preventDefault();
-			return fn;
-		};
-		fastMap(str.split(" "),e=>el.addEventListener(e, op===true ? noDefault : fn, op instanceof Object ? op :undefined));
+        let noDefault = e => {
+            e.preventDefault();
+            return fn;
+        };
+        fastMap(str.split(" "), e => el.addEventListener(e, op === true ? noDefault : fn, op instanceof Object ? op : undefined));
         return el;
     }
 
     function off(el, str, fn) {
-        fastMap(str.split(" "),e=>el.removeEventListener(ee, fn));
+        fastMap(str.split(" "), e => el.removeEventListener(ee, fn));
         return el;
     }
     // AJAX
@@ -431,28 +431,29 @@
         };
         return nodeList;
     }
-	function fireEvent(el,name){
-		if(!name){
-			name=el;
-			el=document;
-		}
-		var event;
-		if(document.createEvent){
-			if(Event){
-				event=new Event(name);
-			}else{
-				event = document.createEvent("Event");
-				event.initEvent(name, true, true);
-			}
-			event.eventName = name;
-			el.dispatchEvent(event);
-		}else{
-			event = document.createEventObject();
-			event.eventType = name;
-			event.eventName = name;
-			el.fireEvent("on" + event.eventType, event);
-		}
-	}
+
+    function fireEvent(el, name) {
+        if (!name) {
+            name = el;
+            el = document;
+        }
+        var event;
+        if (document.createEvent) {
+            if (Event) {
+                event = new Event(name);
+            } else {
+                event = document.createEvent("Event");
+                event.initEvent(name, true, true);
+            }
+            event.eventName = name;
+            el.dispatchEvent(event);
+        } else {
+            event = document.createEventObject();
+            event.eventType = name;
+            event.eventName = name;
+            el.fireEvent("on" + event.eventType, event);
+        }
+    }
     // main
     var E = selector => {
         //nodeList = typeof selector === "string" ? fastQuery(document, selector) : selector;
@@ -481,21 +482,21 @@
             clientY: e.clientY
         }
     });
-	E.scroll = {};
-	on(window,"scroll",e=>{
-		E.scroll = {
-			top: window.pageYOffset,
+    E.scroll = {};
+    on(window, "scroll", e => {
+        E.scroll = {
+            top: window.pageYOffset,
             left: window.pageXOffset
-		};
-	});
-	E.size = {};
-	on(window,"resize load",e=>{
-		E.size = {
-			width:document.documentElement.clientWidth || body.clientWidth,
-			height:document.documentElement.clientHeight || body.clientHeight
-		};
-	});
-	E.event = fireEvent;
+        };
+    });
+    E.size = {};
+    on(window, "resize load", e => {
+        E.size = {
+            width: document.documentElement.clientWidth || body.clientWidth,
+            height: document.documentElement.clientHeight || body.clientHeight
+        };
+    });
+    E.event = fireEvent;
     E.over = (el) => { // test if mouse is over element
         const rect = el.getBoundingClientRect();
         var x = E.mouse.x;
@@ -536,7 +537,7 @@
     E.empty = (el) => el.innerHTML = '';
     /*// Attributes get/set
     E.attr = (el, name, value) => value || value === "" ? el.setAttribute(name, value) : el.getAttribute(name);*/
-    E.css = (el, name, value) => value&&value[0]!==":" ? el.style[name] = value : getComputedStyle(el,value?value:null)[name];
+    E.css = (el, name, value) => value && value[0] !== ":" ? el.style[name] = value : getComputedStyle(el, value ? value : null)[name];
     E.html = (el, str) => str ? el.innerHTML = str : el.innerHTML;
     E.text = (el, str) => str ? el.textContent = str : el.textContent;
     E.next = (el) => el.nextElementSibling;
