@@ -1,4 +1,5 @@
 // replace css methods with ie10+ compatible functions
+// https://github.com/wilsonpage/fastdom | utilize in this script
 // https://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 (() => {
     // ## private vars ##
