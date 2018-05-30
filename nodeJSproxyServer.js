@@ -22,17 +22,51 @@ function get(url,success,error){
     }
   });
 }
-async function asyncGet(url){ //returns
-  function promiseGet(resolve,reject){
-    get(url,resolve,reject);
+
+var NOOP=()=>{};
+function asyncGet(url,success,error){
+  if(!success) success=NOOP;
+  if(!error) error=NOOP;
+	return new Promise(function(resolve,reject){
+		request({
+			uri: url,
+			method: 'GET',
+			maxRedirects:3
+		}, function(err, response, body) {
+			console.log(response&&response.statusCode);
+			if (!err) {
+        resolve(response);
+        success(response);
+			} else {
+        reject({error:err});
+        error(err);
+			}
+		});		
+	});  
+}
+
+// Microcaching
+// Maximum 1 parallel request to backend
+// Serve Stale content if applicable for reduced latency
+var fetchStore={
+  status:{},
+  ongoing:{},
+  stale:{}
+}
+function staleGet(url){
+  if(!fetchStore.status[url]){
+    fetchStore.status[url]=true;
+    function updateStale(){
+      fetchStore.stale[url]=fetchStore.ongoing[url];
+      delete fetchStore.status[url];
+    }
+    fetchStore.ongoing[url]=asyncGet(url,updateStale);
   }
-  var response={};
-  try{
-    response=await new Promise(promiseGet);
-  }catch(err){
-    response.error=err
+  if(fetchStore.stale[url]){
+    return fetchStore.stale[url];
+  }else{
+    return fetchStore.ongoing[url];
   }
-  return response;
 }
 
 var port=8000;
@@ -47,9 +81,9 @@ var proxy = http.createServer(function (req, res) {
       res.end();
     }
     (async()=>{
-      var response=await asyncGet(url);
+      var response=await staleGet(url);
       res.writeHead(200,{'Content-Type': "text/html; charset=utf-8"});
-      if(!(error in response)){ // on success
+      if(!("error" in response)){ // on success
         var body=response.body;
         body=processIMG(body);
         res.write(body);
@@ -78,6 +112,7 @@ function primitiveCache(url){
 
 async function cacheRefresh(url,TTL){
   var response=await asyncGet(url);
+  console.log();
   if(!("error" in response)){ // on success
     cache[url]={
       body:response.body,
