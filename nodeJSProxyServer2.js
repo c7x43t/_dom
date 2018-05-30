@@ -28,11 +28,16 @@ async function get(url,success,error){
     }
   });
 }
-// user function to handle response
-async function handleResponse(res,response){
-	res.writeHead(200,{'Content-Type': "text/html; charset=utf-8"});
+function processResponse(response){
 	var body=response.body;
-	body=processIMG(body);
+	response.body=processIMG(body);
+	return response
+}
+// user function to handle response
+function handleResponse(res,response){
+	res.writeHead(200,{'Content-Type': "text/html; charset=utf-8"});
+	response=processResponse(response);
+	var body=response.body;
 	res.write(body);
 	res.end();
 }
@@ -63,10 +68,9 @@ var proxy = http.createServer(function (req, res) {
 		get(url,success,error);
 		async function success(response){
 			storeFetch[url].status=false;
-			storeFetch[url].stale=response;
-			//storeFetch[url].pending.map(res=>handleResponse(res,response));
+			storeFetch[url].stale=processResponse(response);
 			while(storeFetch[url].pending.length>0){
-				handleResponse(storeFetch[url].pending.shift(),response);
+				handleResponse(storeFetch[url].pending.shift(),storeFetch[url].stale);
 			}
 		}
 		async function error(err){
