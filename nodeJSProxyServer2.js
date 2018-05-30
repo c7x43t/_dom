@@ -48,6 +48,7 @@ var proxy = http.createServer(function (req, res) {
 	};
 	//serve stale if enabled
 	if(options.serveStale&&storeFetch[url].stale){ 
+		res.writeHead(200,{'Content-Type': "text/html; charset=utf-8"});
 		res.write(storeFetch[url].stale.body);
 		res.end();
 	}else{
@@ -72,8 +73,10 @@ var proxy = http.createServer(function (req, res) {
 			storeFetch[url].status=false;
 			storeFetch[url].pending.map((res)=>{
 				if(options.staleOnError&&storeFetch[url].stale){ // serve stale on error if enabled
+					res.writeHead(200,{'Content-Type': "text/html; charset=utf-8"});
 					res.write(storeFetch[url].stale.body);
 				}else{
+					res.writeHead(404,{'Content-Type': "text/plain"});
 					res.write(JSON.stringify(response.error));
 				}
 				res.end();
