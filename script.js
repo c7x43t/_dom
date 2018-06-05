@@ -296,7 +296,7 @@
     }
 
     function off(el, str, fn) {
-        fastMap(str.split(" "), e => el.removeEventListener(ee, fn));
+        fastMap(str.split(" "), e => el.removeEventListener(e, fn));
         return el;
     }
     // AJAX
@@ -527,6 +527,7 @@
     /*E.isHover = e => { // propably useless
         return fastReduce(e.parentElement.querySelectorAll(':hover'), (acc, t) => e === t || acc, false);
     };*/
+	E.style = (el, pseudo) => window.getComputedStyle(el, pseudo ? pseudo : null); //legacy
     E.after = (el, str) => el.insertAdjacentHTML('afterend', str);
     E.before = (el, str) => el.insertAdjacentHTML('beforebegin', str);
     E.append = (el, child) => el.appendChild(child);
