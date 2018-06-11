@@ -482,8 +482,11 @@
             clientY: e.clientY
         }
     });
-    E.scroll = {};
-    on(window, "scroll", e => {
+    E.scroll = {
+        top: 0,
+        left: 0
+    };
+    on(window, "scroll load", function(e) {
         E.scroll = {
             top: window.pageYOffset,
             left: window.pageXOffset
@@ -527,7 +530,7 @@
     /*E.isHover = e => { // propably useless
         return fastReduce(e.parentElement.querySelectorAll(':hover'), (acc, t) => e === t || acc, false);
     };*/
-	E.style = (el, pseudo) => window.getComputedStyle(el, pseudo ? pseudo : null); //legacy
+    E.style = (el, pseudo) => window.getComputedStyle(el, pseudo ? pseudo : null); //legacy
     E.after = (el, str) => el.insertAdjacentHTML('afterend', str);
     E.before = (el, str) => el.insertAdjacentHTML('beforebegin', str);
     E.append = (el, child) => el.appendChild(child);
@@ -567,7 +570,7 @@
     };
     // DOMReady event // # integrate on top - remove here
     E.ready = (fn) => E(document).on("DOMContentLoaded", fn);
-    E.load = (fn) => document.readyState==="complete"?fn():on(window, "load", fn);
+    E.load = (fn) => document.readyState === "complete" ? fn() : on(window, "load", fn);
     // cookies
     E.getCookies = getCookies;
     E.getCookie = getCookie;
