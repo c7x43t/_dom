@@ -567,7 +567,7 @@
     };
     // DOMReady event // # integrate on top - remove here
     E.ready = (fn) => E(document).on("DOMContentLoaded", fn);
-    E.load = (fn) => on(window, "load", fn);
+    E.load = (fn) => document.readyState==="complete"?fn():on(window, "load", fn);
     // cookies
     E.getCookies = getCookies;
     E.getCookie = getCookie;
