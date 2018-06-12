@@ -354,6 +354,7 @@
             })
         }
         newImg.src = imgSrc;
+        newImg=null; // enable GC
     }
     // equip object
     function equipObject(obj) {
