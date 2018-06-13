@@ -1,14 +1,19 @@
 // replace css methods with ie10+ compatible functions
 // https://github.com/wilsonpage/fastdom | utilize in this script
 // https://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-(() => {
+(function() {
     // ## private vars ##
-    var NOOP = () => {};
-    var regexPreFilter = /[.#]?-?[_a-zA-Z]+?[_a-zA-Z0-9-]*/;
-    var regexSpaceFilter = / /;
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
+        return typeof obj;
+    } : function(obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+    var NOOP = function NOOP() {};
+    //var regexPreFilter = /[.#]?-?[_a-zA-Z]+?[_a-zA-Z0-9-]*/;
+    //var regexSpaceFilter = / /;
     // ## private functions ##
     // SORTING
-    const quickSort = (function() {
+    var quickSort = function() {
         var i = 0;
 
         function swap(first, second, array) {
@@ -25,27 +30,13 @@
             }
             return array;
         };
-    })();
+    }();
     // DEEP CLONING
-    function deepCopy(o) {
-        if (typeof o !== "object" || o === null) return o; // fast obj/null test
-        let n;
-        if (o instanceof Array) { // fast array test
-            const l = o.length;
-            n = [];
-            for (let i = 0; i < l; i++) n[i] = deepCopy(o[i]);
-            return n;
-        }
-        n = {};
-        for (let i in o)
-            if (!!o[i]) n[i] = deepCopy(o[i]); // fast hasProperty test
-        return n;
-    }
     // COOKIES
     function getCookies() {
-        const cookies = {};
-        let cookie;
-        document.cookie.split(/; */).map(e => {
+        var cookies = {};
+        var cookie;
+        document.cookie.split(/; */).map(function(e) {
             cookie = e.split("=");
             cookies[cookie[0]] = cookie[1];
         });
@@ -64,49 +55,53 @@
         return !!getCookie(name);
     }
     // FORM SERIALIZATION
-    function serializeToObject(form) { // takes string, Node or NodeList (first Element)
+    function serializeToObject(form) {
+        // takes string, Node or NodeList (first Element)
         form = form instanceof Node ? form : form instanceof NodeList ? form[0] : E(form)[0];
         if (!form || form.nodeName !== "FORM") return;
-        var el, op, obj = {},
-            name, type, value, node;
-        for (el of form.elements) {
+        var el,
+            op,
+            obj = {},
+            name,
+            type,
+            value,
+            node;
+        fastMap(form.elements, function(el) {
             name = el.name;
-            if (name === "") continue;
-            type = el.type;
-            value = el.value;
-            node = el.nodeName;
-            if (/INPUT/.exec(node) && (/text|hidden|password|button|reset|submit/.exec(type) || /checkbox|radio/.exec(type) && el.checked) ||
-                /TEXTAREA/.exec(node) ||
-                /SELECT/.exec(node) && /select-one/.exec(node) ||
-                /BUTTON/.exec(node) && /reset|submit|button/.exec(type)) {
-                obj[name] = encodeURIComponent(value);
-            } else if (/SELECT/.exec(node) && /select-multiple/.exec(node)) {
-                for (op of el.options) {
-                    if (op.selected) {
-                        obj[name] = encodeURIComponent(op.value);
-                    }
+            if (name !== "") {
+                type = el.type;
+                value = el.value;
+                node = el.nodeName;
+                if (/INPUT/.exec(node) && (/text|hidden|password|button|reset|submit/.exec(type) || /checkbox|radio/.exec(type) && el.checked) || /TEXTAREA/.exec(node) || /SELECT/.exec(node) && /select-one/.exec(node) || /BUTTON/.exec(node) && /reset|submit|button/.exec(type)) {
+                    obj[name] = encodeURIComponent(value);
+                } else if (/SELECT/.exec(node) && /select-multiple/.exec(node)) {
+                    fastMap(el.options, function(op) {
+                        if (op.selected) {
+                            obj[name] = encodeURIComponent(op.value);
+                        }
+                    });
                 }
             }
-        }
+        });
         return obj;
     }
 
     function serializeObject(obj) {
-        let keys = Object.keys(obj);
-        let str = "";
-        for (let key of keys) {
+        var str = "";
+        fastMap(obj, function(el, key) {
             str += key + "=" + obj[key] + "&";
-        }
+        });
         str = str.slice(0, str.length - 1);
         return str;
     }
     // fast functions based on: https://github.com/codemix/fast.js/
     // # fast Map
     function fastMap(subject, fn, test) {
-        if (subject instanceof Array || subject instanceof NodeList) { // Array map
-            var length = subject.length,
-                result = new Array(length),
-                i;
+        var length, result, i, keys;
+        if (subject instanceof Array || subject instanceof NodeList) {
+            // Array map
+            length = subject.length;
+            result = new Array(length);
             if (!test) {
                 for (i = 0; i < length; i++) {
                     result[i] = fn(subject[i], i, subject);
@@ -118,11 +113,11 @@
                 }
             }
             return equipArray(result);
-        } else { // Object map
-            var keys = Object.keys(subject),
-                length = keys.length,
-                i,
-                result = {};
+        } else {
+            // Object map
+            keys = Object.keys(subject);
+            length = keys.length;
+            result = {};
             if (!test) {
                 for (i = 0; i < length; i++) {
                     result[keys[i]] = fn(subject[keys[i]], keys[i], subject);
@@ -133,7 +128,7 @@
                     result[keys[i]] = fn(subject[keys[i]], keys[i], subject);
                 }
             }
-            return result
+            return result;
         }
     }
 
@@ -143,11 +138,10 @@
     }
     // # fast Reduce
     function fastReduce(subject, fn, initialValue, test) {
-        if (subject instanceof Array || subject instanceof NodeList) { // Array reduce
-            var length = subject.length,
-                i,
-                result;
-
+        var length, i, result, keys;
+        if (subject instanceof Array || subject instanceof NodeList) {
+            // Array reduce
+            length = subject.length;
             if (initialValue === undefined) {
                 i = 1;
                 result = subject[0];
@@ -165,11 +159,10 @@
                     result = fn(result, subject[i], i, subject);
                 }
             }
-        } else { // Object reduce
-            var keys = Object.keys(subject),
-                length = keys.length,
-                i,
-                result;
+        } else {
+            // Object reduce
+            keys = Object.keys(subject);
+            length = keys.length;
             if (initialValue === undefined) {
                 i = 1;
                 result = subject[keys[0]];
@@ -192,10 +185,11 @@
     }
     // # fast Filter
     function fastFilter(subject, fn, test) {
-        if (subject instanceof Array || subject instanceof NodeList) { // Array filter
-            var length = subject.length,
-                result = [],
-                i;
+        var length, result, i, keys;
+        if (subject instanceof Array || subject instanceof NodeList) {
+            // Array filter
+            length = subject.length;
+            result = [];
             if (!test) {
                 for (i = 0; i < length; i++) {
                     if (fn(subject[i], i, subject)) {
@@ -211,33 +205,32 @@
                 }
             }
             return equipArray(result);
-        } else { // Object filter
-            var keys = Object.keys(subject),
-                length = keys.length,
-                i,
-                result = {};
+        } else {
+            // Object filter
+            keys = Object.keys(subject);
+            length = keys.length;
+            result = {};
             if (!test) {
                 for (i = 0; i < length; i++) {
                     if (fn(subject[keys[i]], keys[i], subject)) {
-                        result[keys[i]] = (subject[keys[i]]);
+                        result[keys[i]] = subject[keys[i]];
                     }
                 }
             } else {
                 for (i = 0; i < length; i++) {
                     if (test(subject[keys[i]])) break;
                     if (fn(subject[keys[i]], keys[i], subject)) {
-                        result[keys[i]] = (subject[keys[i]]);
+                        result[keys[i]] = subject[keys[i]];
                     }
                 }
             }
             return result;
         }
-
     }
     // faster than querySelectorAll (in most cases) #broken
     function fastQuery(el, selector) {
         return el.querySelectorAll(selector);
-        return (!(selector instanceof Node || selector instanceof NodeList)) ? el.querySelectorAll(selector) : selector; //fix '[name=value]' add "," fix :hover
+        /*return (!(selector instanceof Node || selector instanceof NodeList)) ? el.querySelectorAll(selector) : selector; //fix '[name=value]' add "," fix :hover
         var nodeList;
         if (regexPreFilter.exec(selector) && !regexSpaceFilter.exec(selector)) {
             if (selector[0] === ".") {
@@ -251,7 +244,7 @@
         } else {
             nodeList = el.querySelectorAll(selector);
         }
-        return nodeList; //nodeList.hasOwnProperty("length")?nodeList:[nodeList];
+        return nodeList; //nodeList.hasOwnProperty("length")?nodeList:[nodeList];*/
     }
     // fullscreen API from: https://davidwalsh.name/fullscreen
     function launchIntoFullscreen(element) {
@@ -277,8 +270,7 @@
     }
 
     function toggleFullscreen(element) {
-        if (document.fullscreenElement ||
-            document.webkitFullscreenElement || document.mozFullScreenElement) {
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
             exitFullscreen();
         } else {
             launchIntoFullscreen(element);
@@ -287,16 +279,20 @@
 
     // EventListener
     function on(el, str, fn, op) {
-        let noDefault = e => {
+        var noDefault = function noDefault(e) {
             e.preventDefault();
             return fn;
         };
-        fastMap(str.split(" "), e => el.addEventListener(e, op === true ? noDefault : fn, op instanceof Object ? op : undefined));
+        fastMap(str.split(" "), function(e) {
+            return el.addEventListener(e, op === true ? noDefault : fn, op instanceof Object ? op : undefined);
+        });
         return el;
     }
 
     function off(el, str, fn) {
-        fastMap(str.split(" "), e => el.removeEventListener(e, fn));
+        fastMap(str.split(" "), function(e) {
+            return el.removeEventListener(e, fn);
+        });
         return el;
     }
     // AJAX
@@ -306,7 +302,7 @@
             url: url,
             success: success,
             error: error,
-            data: data,
+            data: data
         });
     }
 
@@ -315,18 +311,20 @@
             type: "GET",
             url: url,
             success: success,
-            error: error,
+            error: error
         });
     }
 
     function getJSON(url, success, error) {
-        get(url, e => success(JSON.parse(e)), error);
+        return get(url, function(e) {
+            return success(JSON.parse(e));
+        }, error);
     }
 
     function ajax(data) {
         if (!data.success) data.success = NOOP;
         if (!data.error) data.error = NOOP;
-        let req = new XMLHttpRequest();
+        var req = new XMLHttpRequest();
         req.open(data.type, data.url, true);
         req.onreadystatechange = function() {
             if (req.readyState === 4) {
@@ -348,19 +346,25 @@
     function getImgSize(imgSrc, callback) {
         var newImg = new Image();
         newImg.onload = function() {
-            callback && callback({
-                width: newImg.width,
-                height: newImg.height
-            })
-        }
+            if (callback) {
+                callback({
+                    width: newImg.width,
+                    height: newImg.height
+                });
+            }
+            newImg = null; // enable GC
+        };
         newImg.src = imgSrc;
-        newImg=null; // enable GC
     }
     // equip object
     function equipObject(obj) {
         obj = equipArray(obj);
-        if (!!obj.addEventListener) obj.on = (str, fn, bool) => on(obj, str, fn, bool);
-        if (!!obj.removeEventListener) obj.off = (str, fn) => off(obj, str, fn);
+        if (!!obj.addEventListener) obj.on = function(str, fn, bool) {
+            on(obj, str, fn, bool);
+        };
+        if (!!obj.removeEventListener) obj.off = function(str, fn) {
+            off(obj, str, fn);
+        };
         return obj;
     }
     // equip event
@@ -369,64 +373,83 @@
     }
     // equip single
     function equipSingle(node) {
-        node.on = (str, fn, bool) => on(node, str, fn, bool);
-        node.off = (str, fn) => off(node, str, fn);
-        node.find = (selector) => fastQuery(node, selector);
+        node.on = function(str, fn, bool) {
+            on(node, str, fn, bool);
+        };
+        node.off = function(str, fn) {
+            off(node, str, fn);
+        };
+        node.find = function(selector) {
+            fastQuery(node, selector);
+        };
         return node;
     }
     // equip Array 
     function equipArray(arr) {
-        arr.map = (fn, cond) => fastMap(arr, fn, cond);
-        arr.forEach = (fn, cond) => forEach(arr, fn, cond);
-        arr.reduce = (fn, init, cond) => fastReduce(arr, fn, init, cond);
-        arr.filter = (fn, cond) => fastFilter(arr, fn, cond);
+        arr.map = function(fn, cond) {
+            fastMap(arr, fn, cond);
+        };
+        arr.forEach = function(fn, cond) {
+            forEach(arr, fn, cond);
+        };
+        arr.reduce = function(fn, init, cond) {
+            fastReduce(arr, fn, init, cond);
+        };
+        arr.filter = function(fn, cond) {
+            fastFilter(arr, fn, cond);
+        };
         return arr;
     }
     // equip nodeList
     function equip(nodeList) {
         nodeList = equipArray(nodeList);
-        nodeList.html = str => { // experimental
-            nodeList.map(el => str ? el.innerHTML = str : el.innerHTML);
+        nodeList.html = function(str) {
+            // experimental
+            nodeList.map(function(el) {
+                return str ? el.innerHTML = str : el.innerHTML;
+            });
             return nodeList;
         };
-        nodeList.on = (str, fn, bool) => {
-            fastMap(nodeList, el => {
+        nodeList.on = function(str, fn, bool) {
+            fastMap(nodeList, function(el) {
                 on(el, str, fn, bool);
             });
             return nodeList;
         };
-        nodeList.off = (str, fn) => {
-            fastMap(nodeList, el => {
+        nodeList.off = function(str, fn) {
+            fastMap(nodeList, function(el) {
                 off(el, str, fn);
             });
         };
-        nodeList.click = (fn, bool) => {
+        nodeList.click = function(fn, bool) {
             nodeList.on("click", fn, bool);
             return nodeList;
-        }
-        nodeList.get = n => {
+        };
+        nodeList.get = function(n) {
             return equipSingle(nodeList[n]);
         };
-        nodeList.first = () => {
+        nodeList.first = function() {
             return nodeList.get(0);
-        }
-        nodeList.last = () => {
+        };
+        nodeList.last = function() {
             return nodeList.get(nodeList.length - 1);
-        }
-        nodeList.parent = () => {
-            return equip(fastMap(nodeList, e => e.parentElement));
-        }
+        };
+        nodeList.parent = function() {
+            return equip(fastMap(nodeList, function(e) {
+                return e.parentElement;
+            }));
+        };
         // faster replace operations - EXPERIMENTAL
         // {fn} must return an element
-        nodeList.map.replace = fn => {
+        nodeList.map.replace = function(fn) {
             var nodes = Array.from(nodeList);
-            E.map(nodes, e => {
+            E.map(nodes, function(e) {
                 var k = e.cloneNode(true);
                 fn(k);
                 //list.push(k);
                 e.parentNode.replaceChild(k, e);
             });
-            E.map(nodes, (e, i) => {
+            E.map(nodes, function(e, i) {
                 //e.parentNode.replaceChild(list[i], e);
             });
         };
@@ -456,7 +479,7 @@
         }
     }
     // main
-    var E = selector => {
+    var E = function E(selector) {
         //nodeList = typeof selector === "string" ? fastQuery(document, selector) : selector;
         //return equip(nodeList);
         if (typeof selector === "string") {
@@ -467,13 +490,13 @@
             return equipSingle(selector);
         } else if (selector instanceof Event) {
             return equipEvent(selector);
-        } else if (typeof selector === "object") {
+        } else if ((typeof selector === "undefined" ? "undefined" : _typeof(selector)) === "object") {
             return equipObject(selector);
         }
     };
     // ## public vars ##
     E.mouse = {}; // keep track of mouse position
-    on(document, "mousemove", e => {
+    on(document, "mousemove", function(e) {
         E.mouse = {
             x: e.x,
             y: e.y,
@@ -481,7 +504,7 @@
             pageY: e.pageY,
             clientX: e.clientX,
             clientY: e.clientY
-        }
+        };
     });
     E.scroll = {
         top: 0,
@@ -494,84 +517,119 @@
         };
     });
     E.size = {};
-    on(window, "resize load", e => {
+    on(window, "resize load", function(e) {
         E.size = {
             width: document.documentElement.clientWidth || body.clientWidth,
             height: document.documentElement.clientHeight || body.clientHeight
         };
     });
     E.event = fireEvent;
-    E.over = (el) => { // test if mouse is over element
-        const rect = el.getBoundingClientRect();
+    E.over = function(el) {
+        // test if mouse is over element
+        var rect = el.getBoundingClientRect();
         var x = E.mouse.x;
         var y = E.mouse.y;
         return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom;
     };
-    E.addClass = (el, className) => {
-        if (el.classList)
-            el.classList.add(className);
-        else
-            el.className += ' ' + className;
+    E.addClass = function(el, className) {
+        if (el.classList) el.classList.add(className);
+        else el.className += ' ' + className;
     };
-    E.removeClass = (el, className) => {
-        if (el.classList)
-            el.classList.remove(className);
-        else
-            el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+    E.removeClass = function(el, className) {
+        if (el.classList) el.classList.remove(className);
+        else el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
     };
-    E.hasClass = (el, className) => {
-        if (el.classList)
-            return el.classList.contains(className);
-        else
-            return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+    E.hasClass = function(el, className) {
+        if (el.classList) return el.classList.contains(className);
+        else return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
     };
-    E.toggleClass = (el, className) => {
+    E.toggleClass = function(el, className) {
         return E.hasClass(el, className) ? E.removeClass(el, className) : E.addClass(el, className);
     };
     /*E.isHover = e => { // propably useless
         return fastReduce(e.parentElement.querySelectorAll(':hover'), (acc, t) => e === t || acc, false);
     };*/
-    E.style = (el, pseudo) => window.getComputedStyle(el, pseudo ? pseudo : null); //legacy
-    E.after = (el, str) => el.insertAdjacentHTML('afterend', str);
-    E.before = (el, str) => el.insertAdjacentHTML('beforebegin', str);
-    E.append = (el, child) => el.appendChild(child);
-    E.prepend = (el, child) => el.insertBefore(child, el.firstChild);
-    E.remove = (el) => el.parentNode.removeChild(el);
-    E.replace = (el, str) => el.outerHTML = str;
-    E.clone = (el) => el.cloneNode(true);
-    E.empty = (el) => el.innerHTML = '';
+    E.style = function(el, pseudo) {
+        return window.getComputedStyle(el, pseudo ? pseudo : null);
+    }; //legacy
+    E.after = function(el, str) {
+        return el.insertAdjacentHTML('afterend', str);
+    };
+    E.before = function(el, str) {
+        return el.insertAdjacentHTML('beforebegin', str);
+    };
+    E.append = function(el, child) {
+        return el.appendChild(child);
+    };
+    E.prepend = function(el, child) {
+        return el.insertBefore(child, el.firstChild);
+    };
+    E.remove = function(el) {
+        return el.parentNode.removeChild(el);
+    };
+    E.replace = function(el, str) {
+        return el.outerHTML = str;
+    };
+    E.clone = function(el) {
+        return el.cloneNode(true);
+    };
+    E.empty = function(el) {
+        return el.innerHTML = '';
+    };
     /*// Attributes get/set
     E.attr = (el, name, value) => value || value === "" ? el.setAttribute(name, value) : el.getAttribute(name);*/
-    E.css = (el, name, value) => value && value[0] !== ":" ? el.style[name] = value : getComputedStyle(el, value ? value : null)[name];
-    E.html = (el, str) => str ? el.innerHTML = str : el.innerHTML;
-    E.text = (el, str) => str ? el.textContent = str : el.textContent;
-    E.next = (el) => el.nextElementSibling;
-    E.prev = (el) => el.previousElementSibling;
+    E.css = function(el, name, value) {
+        return value && value[0] !== ":" ? el.style[name] = value : getComputedStyle(el, value ? value : null)[name];
+    };
+    E.html = function(el, str) {
+        return str ? el.innerHTML = str : el.innerHTML;
+    };
+    E.text = function(el, str) {
+        return str ? el.textContent = str : el.textContent;
+    };
+    E.next = function(el) {
+        return el.nextElementSibling;
+    };
+    E.prev = function(el) {
+        return el.previousElementSibling;
+    };
     /*E.scroll = e => {
         return {
             top: window.pageYOffset,
             left: window.pageXOffset
         }
     }*/
-    E.offset = (el) => {
+    E.offset = function(el) {
         return el.getBoundingClientRect();
     };
-    E.parent = (e) => e.parentNode;
-    E.siblings = (e) => fastFilter(e.parentNode.children, child => child !== e);
-    E.position = (e) => {
+    E.parent = function(e) {
+        return e.parentNode;
+    };
+    E.siblings = function(e) {
+        return fastFilter(e.parentNode.children, function(child) {
+            return child !== e;
+        });
+    };
+    E.position = function(e) {
         return {
             left: e.offsetLeft,
             top: e.offsetTop
         };
     };
-    E.find = (el, selector) => fastQuery(el, selector);
-    E.exists = (e) => {
+    E.find = function(el, selector) {
+        return fastQuery(el, selector);
+    };
+    E.exists = function(e) {
         var el = E(e);
         return !!el.length && el.length > 0;
     };
     // DOMReady event // # integrate on top - remove here
-    E.ready = (fn) => E(document).on("DOMContentLoaded", fn);
-    E.load = (fn) => document.readyState === "complete" ? fn() : on(window, "load", fn);
+    E.ready = function(fn) {
+        return E(document).on("DOMContentLoaded", fn);
+    };
+    E.load = function(fn) {
+        return document.readyState === "complete" ? fn() : on(window, "load", fn);
+    };
     // cookies
     E.getCookies = getCookies;
     E.getCookie = getCookie;
@@ -589,8 +647,12 @@
     E.exitFullscreen = exitFullscreen;
     E.toggleFullscreen = toggleFullscreen;
     // local/session Storage
-    E.session = (name, value) => value ? sessionStorage.setItem(name, value) : sessionStorage.getItem(name);
-    E.local = (name, value) => value ? localStorage.setItem(name, value) : localStorage.getItem(name);
+    E.session = function(name, value) {
+        return value ? sessionStorage.setItem(name, value) : sessionStorage.getItem(name);
+    };
+    E.local = function(name, value) {
+        return value ? localStorage.setItem(name, value) : localStorage.getItem(name);
+    };
     // export map-reduce
     E.map = fastMap;
     E.forEach = forEach;
