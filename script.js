@@ -3,11 +3,13 @@
 // https://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 (function() {
     // ## private vars ##
-    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
-        return typeof obj;
-    } : function(obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator ===
+        "symbol" ? function(obj) {
+            return typeof obj;
+        } : function(obj) {
+            return obj && typeof Symbol === "function" && obj.constructor ===
+                Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+        };
     var NOOP = function NOOP() {};
     //var regexPreFilter = /[.#]?-?[_a-zA-Z]+?[_a-zA-Z0-9-]*/;
     //var regexSpaceFilter = / /;
@@ -57,8 +59,8 @@
     // FORM SERIALIZATION
     function serializeToObject(form) {
         // takes string, Node or NodeList (first Element)
-        form = form instanceof Node ? form : form instanceof NodeList ? form[0] : E(form)[0];
-        if (!form || form.nodeName !== "FORM") return;
+        form = form instanceof Node ? form : form instanceof NodeList ?
+            form[0] : E(form)[0];
         var el,
             op,
             obj = {},
@@ -66,18 +68,26 @@
             type,
             value,
             node;
+        if (!form || form.nodeName !== "FORM") return obj;
         fastMap(form.elements, function(el) {
             name = el.name;
             if (name !== "") {
                 type = el.type;
                 value = el.value;
                 node = el.nodeName;
-                if (/INPUT/.exec(node) && (/text|hidden|password|button|reset|submit/.exec(type) || /checkbox|radio/.exec(type) && el.checked) || /TEXTAREA/.exec(node) || /SELECT/.exec(node) && /select-one/.exec(node) || /BUTTON/.exec(node) && /reset|submit|button/.exec(type)) {
-                    obj[name] = encodeURIComponent(value);
-                } else if (/SELECT/.exec(node) && /select-multiple/.exec(node)) {
+                if (/INPUT/.exec(node) && (
+                        /text|hidden|password|button|reset|submit|color|date|datetime-local|email|month|number|range|search|tel|time|url|week/.exec(type) ||
+                        /checkbox|radio/.exec(type) && el.checked) ||
+                    /TEXTAREA/.exec(node) ||
+                    /SELECT/.exec(node) && /select-one/.exec(node) ||
+                    /BUTTON/.exec(node) && /reset|submit|button/.exec(
+                        type)) {
+                    obj[name] = value; //encodeURIComponent(value);
+                } else if (/SELECT/.exec(node) && /select-multiple/
+                    .exec(node)) {
                     fastMap(el.options, function(op) {
                         if (op.selected) {
-                            obj[name] = encodeURIComponent(op.value);
+                            obj[name] = op.value; //encodeURIComponent(op.value);
                         }
                     });
                 }
@@ -270,7 +280,8 @@
     }
 
     function toggleFullscreen(element) {
-        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+        if (document.fullscreenElement || document.webkitFullscreenElement ||
+            document.mozFullScreenElement) {
             exitFullscreen();
         } else {
             launchIntoFullscreen(element);
@@ -284,7 +295,8 @@
             return fn;
         };
         fastMap(str.split(" "), function(e) {
-            return el.addEventListener(e, op === true ? noDefault : fn, op instanceof Object ? op : undefined);
+            return el.addEventListener(e, op === true ? noDefault :
+                fn, op instanceof Object ? op : undefined);
         });
         return el;
     }
@@ -490,7 +502,8 @@
             return equipSingle(selector);
         } else if (selector instanceof Event) {
             return equipEvent(selector);
-        } else if ((typeof selector === "undefined" ? "undefined" : _typeof(selector)) === "object") {
+        } else if ((typeof selector === "undefined" ? "undefined" :
+                _typeof(selector)) === "object") {
             return equipObject(selector);
         }
     };
@@ -519,8 +532,10 @@
     E.size = {};
     on(window, "resize load", function(e) {
         E.size = {
-            width: document.documentElement.clientWidth || body.clientWidth,
-            height: document.documentElement.clientHeight || body.clientHeight
+            width: document.documentElement.clientWidth || body
+                .clientWidth,
+            height: document.documentElement.clientHeight ||
+                body.clientHeight
         };
     });
     E.event = fireEvent;
@@ -529,22 +544,39 @@
         var rect = el.getBoundingClientRect();
         var x = E.mouse.x;
         var y = E.mouse.y;
-        return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom;
+        return x > rect.left && x < rect.right && y > rect.top && y <
+            rect.bottom;
     };
     E.addClass = function(el, className) {
-        if (el.classList) el.classList.add(className);
-        else el.className += ' ' + className;
+        if (el.classList) {
+            el.classList.add(className);
+        }
+        else {
+            el.className += ' ' + className;
+        }
     };
     E.removeClass = function(el, className) {
-        if (el.classList) el.classList.remove(className);
-        else el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+        if (el.classList) {
+            el.classList.remove(className);
+        }
+        else {
+            el.className = el.className.replace(new RegExp('(^|\\b)' +
+                    className.split(' ').join('|') + '(\\b|$)', 'gi'),
+                ' ');
+        }
     };
     E.hasClass = function(el, className) {
-        if (el.classList) return el.classList.contains(className);
-        else return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+        if (el.classList) {
+            return el.classList.contains(className);
+        }
+        else {
+            return new RegExp('(^| )' + className + '( |$)', 'gi').test(
+                el.className);
+        }
     };
     E.toggleClass = function(el, className) {
-        return E.hasClass(el, className) ? E.removeClass(el, className) : E.addClass(el, className);
+        return E.hasClass(el, className) ? E.removeClass(el, className) :
+            E.addClass(el, className);
     };
     /*E.isHover = e => { // propably useless
         return fastReduce(e.parentElement.querySelectorAll(':hover'), (acc, t) => e === t || acc, false);
@@ -579,7 +611,8 @@
     /*// Attributes get/set
     E.attr = (el, name, value) => value || value === "" ? el.setAttribute(name, value) : el.getAttribute(name);*/
     E.css = function(el, name, value) {
-        return value && value[0] !== ":" ? el.style[name] = value : getComputedStyle(el, value ? value : null)[name];
+        return value && value[0] !== ":" ? el.style[name] = value :
+            getComputedStyle(el, value ? value : null)[name];
     };
     E.html = function(el, str) {
         return str ? el.innerHTML = str : el.innerHTML;
@@ -628,7 +661,8 @@
         return E(document).on("DOMContentLoaded", fn);
     };
     E.load = function(fn) {
-        return document.readyState === "complete" ? fn() : on(window, "load", fn);
+        return document.readyState === "complete" ? fn() : on(window,
+            "load", fn);
     };
     // cookies
     E.getCookies = getCookies;
@@ -640,6 +674,10 @@
     E.get = get;
     E.getJSON = getJSON;
     E.post = post;
+    // form serialize
+    E.serialize = function(el) {
+        return serializeObject(serializeToObject(el));
+    };
     // imageSize
     E.getImgSize = getImgSize;
     // fullscreen
@@ -648,10 +686,12 @@
     E.toggleFullscreen = toggleFullscreen;
     // local/session Storage
     E.session = function(name, value) {
-        return value ? sessionStorage.setItem(name, value) : sessionStorage.getItem(name);
+        return value ? sessionStorage.setItem(name, value) :
+            sessionStorage.getItem(name);
     };
     E.local = function(name, value) {
-        return value ? localStorage.setItem(name, value) : localStorage.getItem(name);
+        return value ? localStorage.setItem(name, value) : localStorage
+            .getItem(name);
     };
     // export map-reduce
     E.map = fastMap;
