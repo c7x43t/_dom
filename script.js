@@ -1,3 +1,4 @@
+// CC 7.94 kByte
 // replace css methods with ie10+ compatible functions
 // https://github.com/wilsonpage/fastdom | utilize in this script
 // https://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -11,6 +12,7 @@
                 Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
         };
     var NOOP = function NOOP() {};
+	var undef = void 0;
     //var regexPreFilter = /[.#]?-?[_a-zA-Z]+?[_a-zA-Z0-9-]*/;
     //var regexSpaceFilter = / /;
     // ## private functions ##
@@ -76,18 +78,18 @@
                 value = el.value;
                 node = el.nodeName;
                 if (/INPUT/.exec(node) && (
-                        /text|hidden|password|button|reset|submit|color|date|datetime-local|email|month|number|range|search|tel|time|url|week/.exec(type) ||
+                        /text|hidden|password|button|reset|submit|color|date|datetime-local|email|month|number|range|search|tel|time|url|week/ .exec(type) ||
                         /checkbox|radio/.exec(type) && el.checked) ||
                     /TEXTAREA/.exec(node) ||
                     /SELECT/.exec(node) && /select-one/.exec(node) ||
                     /BUTTON/.exec(node) && /reset|submit|button/.exec(
                         type)) {
-                    obj[name] = value; //encodeURIComponent(value);
+                    obj[name] = value;//encodeURIComponent(value);
                 } else if (/SELECT/.exec(node) && /select-multiple/
                     .exec(node)) {
                     fastMap(el.options, function(op) {
                         if (op.selected) {
-                            obj[name] = op.value; //encodeURIComponent(op.value);
+                            obj[name] = op.value;//encodeURIComponent(op.value);
                         }
                     });
                 }
@@ -152,7 +154,7 @@
         if (subject instanceof Array || subject instanceof NodeList) {
             // Array reduce
             length = subject.length;
-            if (initialValue === undefined) {
+            if (initialValue === undef) {
                 i = 1;
                 result = subject[0];
             } else {
@@ -173,7 +175,7 @@
             // Object reduce
             keys = Object.keys(subject);
             length = keys.length;
-            if (initialValue === undefined) {
+            if (initialValue === undef) {
                 i = 1;
                 result = subject[keys[0]];
             } else {
@@ -296,7 +298,7 @@
         };
         fastMap(str.split(" "), function(e) {
             return el.addEventListener(e, op === true ? noDefault :
-                fn, op instanceof Object ? op : undefined);
+                fn, op instanceof Object ? op : undef);
         });
         return el;
     }
