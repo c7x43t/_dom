@@ -10,7 +10,6 @@ function newPromise(fn) {
     let fnFinally = undef;
     let reason = undef;
     let self = this;
-
     function resolve(value) {
         promise[PROMISE_STATUS] = RESOLVED;
         promise[PROMISE_VALUE] = value;
@@ -44,7 +43,7 @@ function newPromise(fn) {
     }
     let promise = {};
     initialize();
-    promise.then = function(fn) {
+    function _then(fn) {
         if (promise[PROMISE_STATUS] === RESOLVED) {
             fn(promise[PROMISE_VALUE]);
             initialize();
@@ -52,14 +51,14 @@ function newPromise(fn) {
         fnThen = fn;
         return promise;
     }
-    promise.finally = function(fn) {
+    function _finally(fn) {
         if (promise[PROMISE_STATUS] !== PENDING) {
             fn();
         }
         fnFinally = fn;
         // what to return?
     }
-    promise.catch = function(fn) {
+    function _catch(fn) {
         if (promise[PROMISE_STATUS] === REJECTED) {
             fn(reason);
             throw reason;
@@ -67,6 +66,9 @@ function newPromise(fn) {
         fnCatch = fn;
         return promise;
     }
+    Object.defineProperty(promise,"then",{value:_then});
+    Object.defineProperty(promise,"finally",{value:_finally});
+    Object.defineProperty(promise,"catch",{value:_catch});
     fn(resolve, reject);
     return promise;
 }
