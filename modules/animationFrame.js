@@ -1,3 +1,4 @@
+// CC 396
 // animationFrame - wrapper that executes a function at most 60 times/s
 // named functions will be processed faster
 var animationFrame = (function() {
