@@ -46,7 +46,7 @@ function newPromise(fn) {
     initialize();
     promise.then = function(fn) {
         if (promise[PROMISE_STATUS] === RESOLVED) {
-            fn(promise[PROMISE_STATUS]);
+            fn(promise[PROMISE_VALUE]);
             initialize();
         }
         fnThen = fn;
