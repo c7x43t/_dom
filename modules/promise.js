@@ -1,3 +1,4 @@
+// CC 804 bytes
 const undef = void 0; // substitute for undefined
 function _Promise(fn) {
     const PROMISE_STATUS = "[[PromiseStatus]]";
