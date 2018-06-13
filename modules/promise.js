@@ -1,5 +1,5 @@
 const undef = void 0; // substitute for undefined
-function newPromise(fn) {
+function _Promise(fn) {
     const PROMISE_STATUS = "[[PromiseStatus]]";
     const PROMISE_VALUE = "[[PromiseValue]]";
     const PENDING = "pending";
@@ -69,6 +69,7 @@ function newPromise(fn) {
     Object.defineProperty(promise,"then",{value:_then});
     Object.defineProperty(promise,"finally",{value:_finally});
     Object.defineProperty(promise,"catch",{value:_catch});
+    Object.defineProperty(promise,"constructor",{value:_Promise});
     fn(resolve, reject);
     return promise;
 }
