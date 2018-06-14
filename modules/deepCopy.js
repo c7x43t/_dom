@@ -62,57 +62,59 @@ $jscomp.iteratorPrototype = function(a) {
     };
     return a
 };
-function iteratorToArray(iterator){
-	var keys=[];
-    var next={};
-    while(true){
-        next=iterator.next();
-        if(!next.done){
+
+function iteratorToArray(iterator) {
+    var keys = [];
+    var next = {};
+    while (true) {
+        next = iterator.next();
+        if (!next.done) {
             keys.push(next.value);
-        }else{
+        } else {
             break;
         }
     }
     return keys;
 }
+
 function deepCopy(o) {
     if ((typeof o !== "object" || o === null) && !(o instanceof Function)) return o; // fast obj/null test
     var n, keys;
-    var  c = o.constructor;
-	$jscomp.initSymbol();
+    var c = o.constructor;
+    $jscomp.initSymbol();
     $jscomp.initSymbolIterator();
-	if (o[Symbol.iterator] instanceof Function) { // fast array test
+    if (o[Symbol.iterator] instanceof Function) { // fast array test
         // Map and Set have no length property so they will be correctly var ructed
-        var  l = o.length;
+        var l = o.length;
         n = (new c(l));
         switch (c.name) {
             case "Set":
                 //for (var e of o) n.add(deepCopy(e));
-				fastMap(iteratorToArray(o.keys()),function(e){
-					n.add(deepCopy(e));
-				});
+                fastMap(iteratorToArray(o.keys()), function(e) {
+                    n.add(deepCopy(e));
+                });
                 break;
             case "Map":
-				fastMap(iteratorToArray(o.keys()),function(key){
-					n.set(key, deepCopy(o.get(key)));
-				});
+                fastMap(iteratorToArray(o.keys()), function(key) {
+                    n.set(key, deepCopy(o.get(key)));
+                });
                 //for (var [key, value] of o) n.set(key, deepCopy(value));
                 break;
         }
-		fastMap(o,function(e,i){
-			n[i] = deepCopy(e);
-		});
+        fastMap(o, function(e, i) {
+            n[i] = deepCopy(e);
+        });
     } else {
         if (c.name !== "Object") {
             switch (c.name) {
                 case "Function":
                     var str = o.toString();
-                    if(/ \[native code\] /.exec(str) === null){
-                        var args=/^.*?\((.*?)\)/.exec(str)[1];//.split(/,/);
-                        var func=/^.*?{(.*)}/.exec(str)[1];
-                        n=new c(args,func);
-                    }else{
-                        n=o;
+                    if (/ \[native code\] /.exec(str) === null) {
+                        var args = /^.*?\((.*?)\)/.exec(str)[1]; //.split(/,/);
+                        var func = /^.*?{(.*)}/.exec(str)[1];
+                        n = new c(args, func);
+                    } else {
+                        n = o;
                     }
                     break;
                 case "RegExp":
@@ -122,25 +124,25 @@ function deepCopy(o) {
                     n = new c(o);
                     break;
                 case "ArrayBuffer":
-					n = new c((new $jscomp.global["Int8Array"](o)).length);
+                    n = new c((new $jscomp.global["Int8Array"](o)).length);
                     break;
                 default:
-					n = o instanceof Node? o.cloneNode(true) : o;
+                    n = o instanceof Node ? o.cloneNode(true) : o;
             }
             keys = Object.keys(o);
         } else {
             n = {};
             keys = Object.getOwnPropertyNames(o);
         }
-		fastMap(keys,function(i){
-			deepCopy(o[i]);
-		});
+        fastMap(keys, function(i) {
+            deepCopy(o[i]);
+        });
     }
-	if(Object.getOwnPropertySymbols){
-		fastMap(Object.getOwnPropertySymbols(o),function(i){
-			n[i] = deepCopy(o[i]);
-		});
-	}
-    
+    if (Object.getOwnPropertySymbols) {
+        fastMap(Object.getOwnPropertySymbols(o), function(i) {
+            n[i] = deepCopy(o[i]);
+        });
+    }
+
     return n;
 }
