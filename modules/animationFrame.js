@@ -19,7 +19,7 @@ var animationFrame = (function() {
         if (ips < 60) {
             delay = 15;
         } else {
-            delay = 17;
+            delay = 18;
         }
         return t;
     }
