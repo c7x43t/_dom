@@ -1,3 +1,4 @@
+// CC: 329 byes
 function fastApply(fn, args) {
     var fastSpread = {
         0: function(fn) {
