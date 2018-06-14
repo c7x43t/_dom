@@ -62,43 +62,26 @@ $jscomp.iteratorPrototype = function(a) {
     };
     return a
 };
-
-function iteratorToArray(iterator) {
-    var keys = [];
-    var next = {};
-    while (true) {
-        next = iterator.next();
-        if (!next.done) {
-            keys.push(next.value);
-        } else {
-            break;
-        }
-    }
-    return keys;
-}
-
 function deepCopy(o) {
-    if ((typeof o !== "object" || o === null) && !(o instanceof Function)) return o; // fast obj/null test
+    if ((typeof o !== "object" || o === null) && !(o instanceof Function)) return o;
     var n, keys;
     var c = o.constructor;
     $jscomp.initSymbol();
     $jscomp.initSymbolIterator();
-    if (o[Symbol.iterator] instanceof Function) { // fast array test
-        // Map and Set have no length property so they will be correctly var ructed
+    if (o[Symbol.iterator] instanceof Function) {
+        // Map and Set have no length property so they will be correctly constructed
         var l = o.length;
         n = (new c(l));
         switch (c.name) {
             case "Set":
-                //for (var e of o) n.add(deepCopy(e));
-                fastMap(iteratorToArray(o.keys()), function(e) {
-                    n.add(deepCopy(e));
+                o.forEach(function(e,i){
+                   n.add(deepCopy(e)); 
                 });
                 break;
             case "Map":
-                fastMap(iteratorToArray(o.keys()), function(key) {
-                    n.set(key, deepCopy(o.get(key)));
+                o.forEach(function(e,i){
+                   n.set(i, deepCopy(o.get(i))); 
                 });
-                //for (var [key, value] of o) n.set(key, deepCopy(value));
                 break;
         }
         fastMap(o, function(e, i) {
