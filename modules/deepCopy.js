@@ -1,4 +1,4 @@
-// CC 3.49 kBytes
+// CC 2.36 kBytes
 // String, Number, undefined, null, Set, Map, typed Array, Object, Boolean, RegExp, Date, ArrayBuffer, Node
 // Functions, Properties of types: (Primitive, Symbol)
 // shallow copy (by reference):
