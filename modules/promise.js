@@ -1,17 +1,16 @@
 // 1019 bytes minify
 // 454 bytes minify + gz
 const PROMISE_STATUS = "[[PromiseStatus]]",
-    PROMISE_VALUE = "[[PromiseValue]]",
-    PENDING = "pending",
-    RESOLVED = "resolved",
-    REJECTED = "rejected";
+PROMISE_VALUE = "[[PromiseValue]]",
+PENDING = "pending",
+RESOLVED = "resolved",
+REJECTED = "rejected";
 
 
-function initialize(bind) {
+function initialize(bind){
     bind[PROMISE_VALUE] = undefined;
 }
-
-function resolve(value, self) {
+function resolve(value,self) {
     self[PROMISE_STATUS] = RESOLVED;
     self[PROMISE_VALUE] = value;
     if (self.link.then) {
@@ -20,8 +19,7 @@ function resolve(value, self) {
     }
     if (self.link.finally) self.link.finally(); //?
 }
-
-function reject(reason, self) {
+function reject(reason,self) {
     self.reason = reason;
     self[PROMISE_STATUS] = REJECTED;
     self[PROMISE_VALUE] = reason;
@@ -33,38 +31,40 @@ function reject(reason, self) {
     }
     if (self.link.finally) self.link.finally(); //?
 }
-
 function Promise(fn) {
-    if (!(fn instanceof Function)) {
+    if(!(fn instanceof Function)){
         throw "Promise: parameter must be of type: function";
     }
-    const self = this;
-    const link = new Link();
-    Object.defineProperty(this, "link", {
-        value: link
-    });
+    const self=this;
+    //const link=new Link();
+    //Object.defineProperty(this,"link",{value:link});
+    this.link=new Link();
     this[PROMISE_STATUS] = PENDING;
     initialize(this);
-    fn(function(value) {
-        resolve(value, self);
-    }, function(value) {
-        reject(value, self);
-    });
+    try{
+        fn(function(value){
+            resolve(value,self);
+        }, function(value){
+            reject(value,self);
+        });
+    }catch(err){
+        console.error(err);
+    }
+    
 }
-
-function Link() {
-    this.then = undefined;
-    this.catch = undefined;
-    this.finally = undefined;
-    this.reason = undefined;
+function Link(){
+    this.then=undefined;
+    this.catch=undefined;
+    this.finally=undefined;
+    this.reason=undefined;
 }
-Promise.prototype.finally = function(fn) {
+Promise.prototype.finally = function(fn){
     if (this[PROMISE_STATUS] !== PENDING) {
         fn();
     }
     this.link.finally = fn;
 }
-Promise.prototype.then = function(fn) {
+Promise.prototype.then = function(fn){
     if (this[PROMISE_STATUS] === RESOLVED) {
         fn(this[PROMISE_VALUE]);
         initialize(this);
@@ -73,7 +73,7 @@ Promise.prototype.then = function(fn) {
     return this;
 
 }
-Promise.prototype.catch = function(fn) {
+Promise.prototype.catch = function(fn){
     this.link.catch = fn;
     return this;
 }
