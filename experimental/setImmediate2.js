@@ -46,7 +46,7 @@ window.setImmediate = (function() {
             fastApply(item[0], item[1]);
         }
         if (stack.length > 0) {
-            runner();
+            run();
         } else {
             executing = false;
         }
@@ -58,6 +58,7 @@ window.setImmediate = (function() {
     });
 
     function run() {
+        executing = true;
         observedElement.setAttribute('a', '');
     }
     window.clearImmediate = function(id) {
@@ -68,14 +69,12 @@ window.setImmediate = (function() {
         var fn = arguments[0];
         var args = [];
         for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
-        if (stack.length >= 30) {
+        /*if (stack.length >= 30) {
             runner();
-        }
+        }*/
         stack.push([fn, args, handle]);
         ids[handle] = true;
-
         if (!executing) {
-            executing = true;
             run();
         }
         return handle++;
