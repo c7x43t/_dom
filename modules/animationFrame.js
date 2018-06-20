@@ -1,5 +1,5 @@
 // CC 396 bytes
-// animationFrame - wrapper that executes a function at most 60 times/s at an exact frequency of 1/60 1/s
+// executes a function at most 60 times/s at an exact frequency of 1/60 1/s
 // calling this function ensures execution (once), but it may be delayed due to rate limitation
 // usage: animationFrame(myFunc,args);
 // note: named functions will be processed faster
