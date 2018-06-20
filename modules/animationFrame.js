@@ -1,54 +1,41 @@
 // CC 396 bytes
 // animationFrame - wrapper that executes a function at most 60 times/s
 // named functions will be processed faster
-var animationFrame = (function() {
-    var initTime = 0;
-    var iterations = 0;
-    var store = {};
-    var delay;
+function _animationFrame(fn) {
+    var tolerance = 0.1;
+    var fps = 60;
+    var delay = 1e3 / fps;
     var lastTimeout = 0;
-    var lastIteration;
-    var ips;
-
-    function calcIPS(isIteration) {
-        var t = (new Date()).getTime();
-        if (isIteration) {
-            lastIteration = t;
-        }
-        ips = iterations / (lastIteration - initTime) * 1e3;
-        if (ips < 60) {
-            delay = 15;
-        } else {
-            delay = 18;
-        }
-        return t;
-    }
+    var lastIteration = 0;
+    var args;
 
     function iteration() {
-        var keys = Object.keys(store);
-        for (var i = 0; i < keys.length; i++) {
-            store[keys[i]]();
-        }
-        store = {};
-        iterations++;
-        calcIPS(true);
-        lastTimeout = setTimeout(iteration, delay);
+        lastIteration = +new Date;
+        fastApply(fn, args);
     }
 
-    function queue(fn) {
-        var name = fn.name;
-        if (name === "") {
-            name = fn.toString();
-        }
-        if (!store.hasOwnProperty(name)) {
-            store[name] = fn;
-        }
-        if ((calcIPS(false) - lastIteration) > delay) {
+    function run() {
+        var thisIteration = +new Date;
+        args = arguments;
+        if (thisIteration - lastIteration > delay - tolerance) {
             clearTimeout(lastTimeout);
             iteration();
+        } else {
+            lastTimeout = setTimeout(iteration, delay % (thisIteration - lastIteration))
         }
     }
-    initTime = (new Date()).getTime();
-    iteration(true);
-    return queue;
-})();
+    this.run = run;
+}
+
+function animationFrame() {
+    store = {};
+
+    function exec(fn, args) {
+        var name = fn.name !== "" ? fn.name : fn.toString();
+        if (!store.hasOwnProperty(name)) {
+            store[name] = new _animationFrame(fn);
+        }
+        store[name].run(args);
+    }
+    this.exec = exec;
+}
