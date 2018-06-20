@@ -1,5 +1,5 @@
 // CC 396 bytes
-// animationFrame - wrapper that executes a function at most 60 times/s
+// animationFrame - wrapper that executes a function at most 60 times/s at an exact frequency of 1/60 1/s
 // named functions will be processed faster
 function _animationFrame(fn) {
     var tolerance = 0.1;
