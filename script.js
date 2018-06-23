@@ -111,7 +111,7 @@
     function isArray(arr) {
         $jscomp.initSymbol();
         $jscomp.initSymbolIterator();
-        return o[Symbol.iterator] instanceof Function;
+        return arr[Symbol.iterator] instanceof Function;
     }
 
     function deepCopy(o) {
@@ -1095,7 +1095,9 @@
     E.getJSON = getJSON;
     E.post = post;
     // imageSize
-    E.getImgSize = getImgSize;
+    E.getImgSize = function(e){
+		return memoize(getImgSize,e);
+	};
     // fullscreen
     E.enterFullscreen = launchIntoFullscreen;
     E.exitFullscreen = exitFullscreen;
