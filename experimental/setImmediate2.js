@@ -32,8 +32,6 @@ function fastApply(fn, args) {
         fn.apply(null, args);
     }
 }
-
-
 (function() {
     var stack = [];
     var handle = 1;
@@ -49,7 +47,7 @@ function fastApply(fn, args) {
             fastApply(item[0], item[1]);
         }
         if (stack.length > 0) {
-            run();
+            run[implementation]();
         } else {
             executing = false;
         }
@@ -69,10 +67,10 @@ function fastApply(fn, args) {
         implementation = 1;
     }
 
-    var run = [function run() {
+    var run = [function() {
         executing = true;
         observedElement.setAttribute('a', '');
-    }, function run() {
+    }, function() {
         executing = true;
         channel.port2.postMessage('');
     }]
