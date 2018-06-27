@@ -73,7 +73,7 @@ function fastApply(fn, args) {
     }, function() {
         executing = true;
         channel.port2.postMessage('');
-    }]
+    }];
     window.clearImmediate = function(id) {
         ids[id] = null;
         delete ids[id];
