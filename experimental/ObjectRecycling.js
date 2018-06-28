@@ -29,6 +29,6 @@ function Recyclable(keys) {
                 }
             }
         })
-	`);
+    `);
     return recyclable;
 }
