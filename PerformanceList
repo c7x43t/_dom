@@ -1,3 +1,9 @@
 https://developers.google.com/web/tools/chrome-devtools/rendering-tools/
 https://calendar.perfplanet.com/2013/the-runtime-performance-checklist/
 https://www.smashingmagazine.com/2012/11/writing-fast-memory-efficient-javascript/
+
+
+Animating Elements:
+  Force GPU render:
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
