@@ -1,0 +1,40 @@
+Logs for Serverwork+Appwork
+
+20180514    -    vServer+Domain gekauft netcup.de Laufzeit: unlimited
+
+// linux (debian) log
+sudo systemctl stop apache2
+sudo apt-get install nginx -y
+nginx -V # --prefix= # web root is /usr/share/nginx/html
+chmod -R 777 /usr/share/nginx/html
+apt-get install proftpd
+nano /etc/proftpd/proftpd.conf
+// uncomment: # DefaultRoot                       ~
+adduser ftpuser01 -shell /bin/false -home /usr/share/nginx/html
+// ftpuser01 passwort: lorcsaksea1
+// list used ports | netstat -pln
+// switch back to apache
+sudo systemctl stop nginx
+sudo systemctl start apache2
+sudo apt-get remove proftpd
+sudp apt-get install vsftpd
+// nano vsftpd.conf | chroot_local_user=NO
+service vsftpd restart
+// 
+sudo useradd ftpuser00
+sudo usermod -a -G ftp ftpuser00
+// HOLY SHIT https://www.digitalocean.com/community/tutorials/how-to-configure-vsftpd-to-use-ssl-tls-on-a-centos-vps
+
+// getting mongoDB 3.6 on CentOS
+// https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/
+
+// starting up services
+service mongod start
+// browser-refresh /home/ftpuser/server.js
+// run forever
+// nohup browser-refresh /home/ftpuser/server.js > /dev/null &
+// npm install forever -g
+forever start /home/ftpuser/server.js
+// how to use mongoDB
+// http://mongodb.github.io/node-mongodb-native/3.0/quick-start/quick-start/
+
