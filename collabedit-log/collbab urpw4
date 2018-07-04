@@ -1,0 +1,31 @@
+Link domain-IP
+Zu installierende Software auf Server:
+    -    node (done)
+    -    mongoDB (done)
+    -    ~nginx oder apache(Apache2 bereits vorinstalliert) (done)
+
+OAuth:
+    https://developers.facebook.com/docs/facebook-login/web
+    https://developers.google.com/identity/protocols/OpenIDConnect
+Server:
+    setup working file transmission via ftp or scp (done)
+WebStack:
+    get local version running
+    1: hot-reloading nodejs example (done)
+    2: create basic routes [pages] (done/local)
+[NGINX]
+Setup nginx proxy [handling static files/ssl/etc.]:
+// https://www.nginx.com/blog/5-performance-tips-for-node-js-applications/
+// https://medium.com/@jgefroh/a-guide-to-using-nginx-for-static-websites-d96a9d034940
+// TCP fastopen (not supoported by virtually all clients)
+//https://www.unixteacher.org/blog/linux/speed-up-web-delivery-with-nginx-and-tfo/
+// https://designhost.gr/topic/799-enabling-tcp-fast-open-for-nginx-on-centos-7/
+// precompress static files (gzip)
+http://killtheradio.net/technology/using-gzip_static-in-nginx-to-cache-gzip-files/
+https://www.npmjs.com/package/http-static-gzip-regexp
+
+BloomFilter for compressed bulk hashkey exchange [experimental]:
+https://github.com/jasondavies/bloomfilter.js/blob/master/bloomfilter.js
+[Linux]
+// system settings for high concurrency
+https://easyengine.io/tutorials/linux/sysctl-conf/
