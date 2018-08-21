@@ -3,7 +3,8 @@ function findElementsByContent(document,str,selector){
   if(selector===undefined) selector="*";
   var els = typeof selector==="string"?document.querySelectorAll(selector):Array.from(elements);
   for(var i=0; i<els.length; i++){
-      if(els[i].innerHTML.includes(str)){
+	var text=els[i].text
+      if(text&&text.includes(str)){
             results.push(els[i]);
       }
   }
